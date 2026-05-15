@@ -1,10 +1,10 @@
 /* Invest Maroc — design tokens */
 
 :root {
-  /* Modern crisp light palette */
-  --bg: #ffffff;
-  --bg-2: #f8fafc;
-  --paper: rgba(255, 255, 255, 0.85);
+  /* Modern crisp light palette — blue-tinted */
+  --bg: #f9faff;
+  --bg-2: #f0f4fe;
+  --paper: rgba(249, 250, 255, 0.88);
   --ink: #0f172a;
   --ink-2: #334155;
   --ink-3: #64748b;
@@ -26,9 +26,9 @@
   --terra-2:    #1d4ed8;
   --terra-soft: rgba(37, 99, 235, 0.15);
 
-  /* Signals */
-  --good: #059669;
-  --good-soft: rgba(5, 150, 105, 0.1);
+  /* Signals — harmonized with blue primary */
+  --good: #0d9488;
+  --good-soft: rgba(13, 148, 136, 0.1);
   --warn: #d97706;
   --warn-soft: rgba(217, 119, 6, 0.1);
   --bad: #dc2626;
@@ -2841,7 +2841,7 @@ select.text {
 
 /* Gap zone permanent tooltip */
 .lf-gap-tip {
-  background: rgba(31,76,50,0.92) !important;
+  background: rgba(13,100,120,0.92) !important;
   border: 1px solid rgba(47,107,70,0.6) !important;
   border-radius: 7px !important;
   padding: 5px 10px !important;

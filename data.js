@@ -10,13 +10,13 @@ const REGIONS = [
 ];
 
 const SECTORS = {
-  infrastructure: { color: '#c2562b', label: 'Infrastructure' },
-  energie:        { color: '#1f6b3a', label: 'Énergie' },
-  industrie:      { color: '#5a4691', label: 'Industrie' },
-  tourisme:       { color: '#2a6fa8', label: 'Tourisme' },
-  agriculture:    { color: '#7a8a2c', label: 'Agriculture' },
-  immobilier:     { color: '#a8481f', label: 'Immobilier' },
-  tech:           { color: '#3a342c', label: 'Tech' },
+  infrastructure: { color: '#2563eb', label: 'Infrastructure' },  // blue
+  energie:        { color: '#0d9488', label: 'Énergie' },          // teal
+  industrie:      { color: '#7c3aed', label: 'Industrie' },        // violet
+  tourisme:       { color: '#d97706', label: 'Tourisme' },          // amber
+  agriculture:    { color: '#059669', label: 'Agriculture' },       // green (kept — earth/nature)
+  immobilier:     { color: '#e11d48', label: 'Immobilier' },        // rose
+  tech:           { color: '#475569', label: 'Tech' },              // slate
 };
 
 const NATIONAL_PROJECTS = [

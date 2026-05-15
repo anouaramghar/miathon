@@ -20,20 +20,27 @@ function svgToLatLng(pctY, pctX) {
   ];
 }
 
+// 6-color harmonized palette — shares hue family with the blue primary
+//   Blue   #2563eb — professional services
+//   Teal   #0d9488 — food & daily commerce
+//   Amber  #d97706 — cafés & boulangeries
+//   Rose   #e11d48 — health / pharmacy
+//   Violet #7c3aed — retail & lifestyle
+//   Slate  #475569 — accommodation & misc
 const COMPETITOR_COLORS = {
-  'Café':                 '#6b5c3e',
-  'Restaurant':           '#8b4513',
-  'Épicerie':             '#2e6b3e',
-  'Pharmacie':            '#c2562b',
-  'Pharmacie (1.8km)':    '#c2562b',
-  'Marché Souk':          '#5a4691',
-  'Papeterie':            '#2a6fa8',
-  'Pressing':             '#3a342c',
-  'Boulangerie':          '#c2882b',
-  'Magasin vêtements':    '#6b3a8c',
-  'Coworking':            '#2a7fa8',
-  'Résidence meublée':    '#5a6b8c',
-  'Hôtel':                '#8c5a2a',
+  'Café':                 '#d97706',  // amber  — food/drink
+  'Restaurant':           '#0d9488',  // teal   — food service
+  'Boulangerie':          '#d97706',  // amber  — food/drink
+  'Épicerie':             '#0d9488',  // teal   — daily commerce
+  'Marché Souk':          '#0d9488',  // teal   — daily commerce
+  'Pharmacie':            '#e11d48',  // rose   — health
+  'Pharmacie (1.8km)':    '#e11d48',  // rose   — health
+  'Papeterie':            '#2563eb',  // blue   — professional
+  'Coworking':            '#2563eb',  // blue   — professional
+  'Magasin vêtements':    '#7c3aed',  // violet — retail
+  'Pressing':             '#475569',  // slate  — services
+  'Résidence meublée':    '#475569',  // slate  — accommodation
+  'Hôtel':                '#475569',  // slate  — accommodation
 };
 
 const COMPETITOR_ICONS = {
@@ -97,7 +104,7 @@ function NeighborhoodMapLeaflet({ scenario, height = 440 }) {
     ].forEach(({ r, label, opacity }) => {
       L.circle(center, {
         radius: r,
-        color: '#c2562b',
+        color: '#2563eb',
         weight: 1.5,
         dashArray: '5 6',
         fillOpacity: 0,
@@ -112,10 +119,10 @@ function NeighborhoodMapLeaflet({ scenario, height = 440 }) {
 
     L.circle(gapPos, {
       radius: 160,
-      color: '#2f6b46',
+      color: '#0d9488',
       weight: 2,
       dashArray: '6 4',
-      fillColor: '#2f6b46',
+      fillColor: '#0d9488',
       fillOpacity: 0.09,
     }).addTo(map)
       .bindTooltip(
