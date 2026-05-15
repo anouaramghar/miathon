@@ -78,8 +78,8 @@ function Landing({ onCTA, onQuickDemo }) {
           <div className="layer-foot">
             <div className="layer-num">847<span className="unit">projets surveillés</span></div>
             <div className="layer-desc">
-              Scraping toutes les 24h : CRI, AMDIE, presse économique.
-              Extraction LLM structurée.
+              Surveillance continue des grands projets par IA.
+              Extraction et structuration automatique.
             </div>
           </div>
         </div>

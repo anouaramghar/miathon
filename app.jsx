@@ -111,15 +111,15 @@ function App() {
     <div className="app">
       <header className="topbar">
         <div className="brand">
-          <span className="brand-mark"/>
+          <img src="logo.png?v=2" alt="Logo InvestMap" style={{ height: 52, width: 'auto', objectFit: 'contain' }} />
           InvestMap <span className="it">Maroc</span>
         </div>
         <div className="topbar-right">
           {(phase === 'dashboard' || phase === 'results' || phase === 'cri') && (
-            <span className="trust-strip">
-              <span className="trust-dot"/>
-              5 sources · Google Maps · HCP · Inforisk · MAJ il y a 7 min
-            </span>
+              <span className="trust-strip">
+                <span className="trust-dot"/>
+                Analyse IA en temps réel · MAJ il y a 7 min
+              </span>
           )}
           {(phase === 'dashboard' || phase === 'results' || phase === 'cri') && (
             <div className="view-switcher">

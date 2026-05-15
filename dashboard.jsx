@@ -123,7 +123,7 @@ function Dashboard({ scenario, onSeeReport, onSeeRadar, onRestart, onEditCriteri
               {reco.verdict}
             </span>
             {hasRadar && radarVisible && (
-              <span className="radar-boost-badge">⚡ +{radarBonus} pts Radar</span>
+              <span className="radar-boost-badge">+{radarBonus} pts Radar</span>
             )}
           </div>
         </div>

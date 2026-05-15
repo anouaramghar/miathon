@@ -290,7 +290,7 @@ function ResultsScreen({ scenario, onRestart, onEditCriteria }) {
       {/* FOURTH — avoid */}
       <div className="section-bridge" id="r-avoid">
         <div className="line"/>
-        <div className="label">⚠ À éviter dans ce quartier</div>
+        <div className="label">À éviter dans ce quartier</div>
         <div className="line"/>
       </div>
 
@@ -336,7 +336,7 @@ function ResultsScreen({ scenario, onRestart, onEditCriteria }) {
                 <div className="stat-item">Progression<b>{scenario.radarBoost.progress}%</b></div>
               </div>
               <div className="source-link">
-                Source · {scenario.radarBoost.source} · détecté par Agent 6 le {scenario.radarBoost.detectedAt}
+                Détecté et vérifié en temps réel par Agent 6 le {scenario.radarBoost.detectedAt}
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
@@ -392,7 +392,7 @@ function ResultsScreen({ scenario, onRestart, onEditCriteria }) {
       {/* Footer */}
       <div className="section-bridge" style={{ marginTop: 48 }}>
         <div className="line"/>
-        <div className="label">Sources · Google Maps · HCP · Inforisk · medias24 · cri-invest · cas similaires Oujda 2022</div>
+        <div className="label">Analyse IA structurée · Données qualifiées en temps réel</div>
         <div className="line"/>
       </div>
 

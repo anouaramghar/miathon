@@ -70,7 +70,7 @@ function ProjectDetailPanel({ project, onClose, onViewInvest }) {
           marginBottom: 16,
         }}>
           <div style={{ fontFamily: 'var(--sans)', fontSize: 'var(--text-xs)', fontWeight: 500, color: 'var(--ink-3)', letterSpacing: 'var(--ls-label)', textTransform: 'uppercase', marginBottom: 8 }}>
-            ⚡ Connexion Invest
+            Connexion Invest
           </div>
           <div style={{ fontSize: 13, color: 'var(--ink-2)', marginBottom: 12, lineHeight: 1.45 }}>
             Ce projet génère des opportunités locales mesurables — pharmacies, hôtellerie, restauration, logistique.
@@ -93,9 +93,9 @@ function ProjectDetailPanel({ project, onClose, onViewInvest }) {
           </div>
         )}
         <div className="proj-detail-section">
-          <div className="dl">Source</div>
+          <div className="dl">Mise à jour</div>
           <p style={{ fontFamily: 'var(--sans)', fontSize: 'var(--text-xs)', color: 'var(--ink-3)' }}>
-            Agent 6 · CRI / AMDIE · MAJ il y a 7 min
+            Agent 6 · Surveillance continue · MAJ il y a 7 min
           </p>
         </div>
       </div>
@@ -276,7 +276,7 @@ function CRIDashboard({ scenario, onRestart, onViewInvest }) {
       }}>
         <span>
           <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: 'var(--good)', marginRight: 8, verticalAlign: 1 }}/>
-          Agent 6 actif · prochain scrape dans 17h 42m · sources : medias24 · cri-invest · leconomiste · mapmaroc · investinmorocco
+          Agent 6 actif · surveillance en temps réel
         </span>
         <span>847 projets · 12 régions · MAJ il y a 7 min</span>
       </div>

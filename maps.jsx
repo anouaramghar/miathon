@@ -58,14 +58,20 @@ function NeighborhoodMapLeaflet({ scenario, height = 440 }) {
 
     const map = L.map(el, {
       center,
-      zoom: 15,
+      zoom: 16,
       zoomControl: true,
-      scrollWheelZoom: false,
+      scrollWheelZoom: true,
+      wheelPxPerZoomLevel: 30,
+      wheelDebounceTime: 15,
+      zoomSnap: 0.5,
     });
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      maxZoom: 19,
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 22,
+      maxNativeZoom: 19,
+      detectRetina: true,
     }).addTo(map);
 
     // ── Distance rings ──
@@ -213,13 +219,19 @@ function MoroccoMapLeaflet({ projects, sectorFilter, onProjectClick, highlight }
     const map = L.map(el, {
       zoomControl: true,
       scrollWheelZoom: true,
+      wheelPxPerZoomLevel: 30,
+      wheelDebounceTime: 15,
+      zoomSnap: 0.5,
       minZoom: 4,
-      maxZoom: 10,
+      maxZoom: 14,
     });
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      maxZoom: 19,
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 22,
+      maxNativeZoom: 19,
+      detectRetina: true,
     }).addTo(map);
 
     // Fit to Morocco bounds (includes Western Sahara projects)
@@ -310,9 +322,12 @@ function LandingMacroMap() {
       attributionControl: false,
     });
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: 'abcd',
-      maxZoom: 19,
+      maxZoom: 22,
+      maxNativeZoom: 19,
+      detectRetina: true,
     }).addTo(map);
 
     map.fitBounds([[21.5, -17.5], [36.0, -0.5]]);
@@ -354,9 +369,12 @@ function LandingMicroMap() {
       attributionControl: false,
     });
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: 'abcd',
-      maxZoom: 19,
+      maxZoom: 22,
+      maxNativeZoom: 19,
+      detectRetina: true,
     }).addTo(map);
 
     // Opportunity gap zone
