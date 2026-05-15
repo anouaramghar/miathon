@@ -36,6 +36,22 @@ const COMPETITOR_COLORS = {
   'Hôtel':                '#8c5a2a',
 };
 
+const COMPETITOR_ICONS = {
+  'Café':                 '☕',
+  'Restaurant':           '🍽',
+  'Épicerie':             '🛒',
+  'Pharmacie':            '💊',
+  'Pharmacie (1.8km)':    '💊',
+  'Boulangerie':          '🥖',
+  'Magasin vêtements':    '👗',
+  'Coworking':            '💼',
+  'Résidence meublée':    '🏠',
+  'Hôtel':                '🏨',
+  'Marché Souk':          '🏪',
+  'Papeterie':            '📄',
+  'Pressing':             '👔',
+};
+
 function NeighborhoodMapLeaflet({ scenario, height = 440 }) {
   const containerRef = React.useRef(null);
 
@@ -111,14 +127,15 @@ function NeighborhoodMapLeaflet({ scenario, height = 440 }) {
     scenario.competitors.forEach(c => {
       if (c.count === 0) return;
       const color = COMPETITOR_COLORS[c.type] || '#555';
+      const emoji = COMPETITOR_ICONS[c.type] || '📍';
 
       if (c.names && c.names.length > 0) {
-        // Individual named markers — spread around base position
+        // Individual icon markers — spread around base position
         const n = c.names.length;
         const spread = n <= 1 ? 0 : (n === 2 ? 3.5 : 4.8);
         const countNote = c.count > n
-          ? ` · parmi ${c.count} dans la zone`
-          : ' · concurrent actif';
+          ? `parmi ${c.count} dans la zone`
+          : 'concurrent actif';
 
         c.names.forEach((name, i) => {
           const angle = n === 1 ? 0 : (i / n) * 2 * Math.PI - Math.PI / 4;
@@ -126,25 +143,28 @@ function NeighborhoodMapLeaflet({ scenario, height = 440 }) {
           const offX  = n === 1 ? 0 : Math.sin(angle) * spread * 1.2;
           const pos   = toLatLng(c.lat + offY, c.lng + offX);
 
-          const html = `<div class="lf-comp-pin${c.far ? ' far' : ''}" style="background:${color}">${name}</div>`;
-          const icon = L.divIcon({ className: '', html, iconSize: null, iconAnchor: [0, 12] });
+          const html = `<div class="lf-comp-icon${c.far ? ' far' : ''}" style="background:${color}">${emoji}</div>`;
+          const icon = L.divIcon({ className: '', html, iconSize: [28, 28], iconAnchor: [14, 14] });
 
           L.marker(pos, { icon, opacity: c.far ? 0.55 : 1 })
             .addTo(map)
+            .bindTooltip(`<b>${name}</b><span class="lf-tip-sub">${c.type} · ${countNote}</span>`,
+              { direction: 'top', className: 'lf-name-tip', offset: [0, -6] })
             .bindPopup(
-              `<b>${name}</b><br/><span style="font-size:11px;color:#888">${c.type}${countNote}</span>`,
+              `<b>${name}</b><br/><span style="font-size:11px;color:#888">${c.type} · ${countNote}</span>`,
               { maxWidth: 200 }
             );
         });
       } else {
-        // Fallback: old grouped marker
+        // Fallback: icon marker with type label
         const pos   = toLatLng(c.lat, c.lng);
         const label = c.count > 1 ? `${c.type} ×${c.count}` : c.type;
-        const html  = `<div class="lf-comp-pin${c.far ? ' far' : ''}" style="background:${color}">${label}</div>`;
-        const icon  = L.divIcon({ className: '', html, iconSize: null, iconAnchor: [0, 12] });
+        const html  = `<div class="lf-comp-icon${c.far ? ' far' : ''}" style="background:${color}">${emoji}</div>`;
+        const icon  = L.divIcon({ className: '', html, iconSize: [28, 28], iconAnchor: [14, 14] });
 
         L.marker(pos, { icon, opacity: c.far ? 0.55 : 1 })
           .addTo(map)
+          .bindTooltip(`<b>${label}</b>`, { direction: 'top', className: 'lf-name-tip', offset: [0, -6] })
           .bindPopup(
             `<b>${c.type}</b><br/><span style="font-size:11px;color:#888">${c.count} établissement${c.count > 1 ? 's' : ''} dans la zone</span>`
           );
@@ -388,15 +408,16 @@ function LandingMicroMap() {
       interactive: false,
     }).addTo(map);
 
-    // Two competitor pills
+    // Two competitor icon pins
     [
       { type: 'Café', pctY: 38, pctX: 32 },
       { type: 'Épicerie', pctY: 64, pctX: 68 },
     ].forEach(({ type, pctY, pctX }) => {
-      const pos = svgToLatLng(pctY, pctX);
+      const pos   = svgToLatLng(pctY, pctX);
       const color = COMPETITOR_COLORS[type] || '#555';
-      const html = `<div class="lf-comp-pin" style="background:${color}">${type}</div>`;
-      const icon = L.divIcon({ className: '', html, iconSize: null, iconAnchor: [0, 12] });
+      const emoji = COMPETITOR_ICONS[type] || '📍';
+      const html  = `<div class="lf-comp-icon" style="background:${color}">${emoji}</div>`;
+      const icon  = L.divIcon({ className: '', html, iconSize: [28, 28], iconAnchor: [14, 14] });
       L.marker(pos, { icon, interactive: false }).addTo(map);
     });
 
