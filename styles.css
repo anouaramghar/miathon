@@ -12,14 +12,19 @@
   --line: #e2e8f0;
   --line-2: #cbd5e1;
 
-  /* Primary / Accents (Modern corporate) */
-  --green: #2563eb; /* Blue */
-  --green-2: #1d4ed8;
+  /* Primary accent — Blue */
+  --blue:       #2563eb;
+  --blue-2:     #1d4ed8;
+  --blue-soft:  rgba(37, 99, 235, 0.12);
+
+  /* Aliases (used throughout — both point to blue) */
+  --green:      #2563eb;
+  --green-2:    #1d4ed8;
   --green-soft: rgba(37, 99, 235, 0.1);
 
-  --terra: #4f46e5; /* Indigo */
-  --terra-2: #4338ca;
-  --terra-soft: rgba(79, 70, 229, 0.15);
+  --terra:      #2563eb;
+  --terra-2:    #1d4ed8;
+  --terra-soft: rgba(37, 99, 235, 0.15);
 
   /* Signals */
   --good: #059669;
@@ -1310,7 +1315,7 @@ select.text {
   z-index: 2;
 }
 .layer-tag .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; }
-.layer-tag.macro .dot { background: var(--terra); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); animation: blink 1.8s ease-in-out infinite; }
+.layer-tag.macro .dot { background: var(--terra); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); animation: blink 1.8s ease-in-out infinite; }
 .layer-tag.micro .dot { background: var(--green); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); }
 @keyframes blink {
   0%, 100% { opacity: 1; }
@@ -1715,7 +1720,7 @@ select.text {
 .map-legend .pin.green { background: #2f7a4a; box-shadow: 0 0 0 1px #2f7a4a; }
 .map-legend .pin.orange { background: var(--terra); box-shadow: 0 0 0 1px var(--terra); }
 .map-legend .pin.blue { background: #2a6fa8; box-shadow: 0 0 0 1px #2a6fa8; }
-.map-legend .pin.you { background: var(--terra); box-shadow: 0 0 0 3px rgba(194,86,43,0.25); }
+.map-legend .pin.you { background: var(--terra); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25); }
 
 /* Opportunities right panel */
 .opp-panel {
