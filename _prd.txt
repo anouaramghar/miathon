@@ -1,0 +1,759 @@
+ Product Requirements
+
+Document -- Invest Maroc
+
+Version: 3.0 | Date: Mai 2026 | Statut: Draft -- Miathon 3rd Edition
+
+Équipe: Anouar · Marouane · Aymen -- ENIAD Berkane, Université Mohammed Premier
+
+   Superviseur: Prof. Redouane LHIADI
+
+1. Vision du Produit
+
+1.1 Énoncé de vision
+
+   "Au Maroc, deux problèmes coexistent sans se parler : des milliers de particuliers ont du capital
+   mais ne savent pas où investir localement -- et des milliards de dirhams de projets
+   d'investissement nationaux sont annoncés chaque année sans que les acteurs locaux en tirent
+   profit. InvestMap Maroc est la première plateforme qui connecte ces deux mondes : un radar
+   national qui surveille tous les grands projets d'investissement, et un moteur local qui prédit le
+   succès de chaque business dans chaque quartier. Les deux s'alimentent mutuellement -- quand
+   un grand projet arrive dans ta région, InvestMap te dit quelle opportunité saisir avant tout le
+   monde."
+
+1.2 Les deux problèmes résolus
+
+ Problème 1 -- Le particulier (Bottom-up )
+
+   "J'ai de l'argent, j'ai envie -- mais je ne sais pas quoi ouvrir dans ma ville."
+
+Profil            Situation                     Douleur
+ MRE                                            Ne connaît plus le marché local
+ Diplômé chômeur  150 000 DH épargnés           Ne sait pas quel secteur est porteur
+ Femme divorcée   30 000 DH d'économies         Veut un business gérable seule
+ Fonctionnaire    Indemnité reçue               Peur de perdre ses économies
+ Fellah           Économies de toute une vie    Ne connaît rien au commerce
+                  200 000 DH
+
+ Problème 2 -- L'institution (Top-down )
+
+"Des milliards de dirhams de projets d'investissement sont annoncés -- mais dispersés sur des
+dizaines de sources sans vision unifiée."
+
+Acteur                                          Besoin
+                                                Évaluer rapidement le potentiel de dossiers clients
+ Banques
+
+ Product Requirements Document -- Invest Maroc                                                        1
+Acteur                                          Besoin
+                                                Suivre les projets dans leur région en temps réel
+ CRI régionaux                                  Visualiser les opportunités sectorielles nationales
+ Investisseurs institutionnels                  Détecter les grands projets avant leur lancement
+ PME et sous-traitants
+
+1.3 La connexion magique -- ce que personne ne fait
+
+Radar détecte:
+   "Nador West Med -- Port en construction
+     Investissement: 10 milliards DH
+     Région: Oriental · Phase: En cours 2026-2028"
+
+ InvestMap notifie Hassan à Amsterdam:
+   "Un grand port se construit près de Berkane.
+     Nouvelles opportunités détectées dans ta région:
+
+   Station-service près du port: 94/100
+   Restaurant pour les ouvriers: 87/100
+   Entrepôt logistique: 82/100
+
+Investis maintenant avant la hausse des prix."
+
+ChatGPT ne peut pas faire ça. Aucune plateforme existante ne fait ça.
+
+1.4 Chiffres clés
+
+Indicateur                                      Valeur         Source
+
+Faillites d'entreprises 2023                    14 200 (+15%)  Inforisk / Allianz
+
+Transferts MRE 2024                             117,7 milliards DH Office des Changes
+
+Part investie productif (MRE)                   1,3% seulement CESE 2022
+
+Investissements approuvés au Maroc 2024         +550 milliards DH AMDIE
+
+Taux chômage jeunes 15-24 ans                   37,2%          HCP 2025
+
+Projets d'investissement non suivis localement des milliers    Estimation
+
+2. Utilisateurs Cibles
+
+Niveau 1 -- Particuliers (Invest Layer)
+
+Persona 1 -- Hassan (MRE, Amsterdam)
+Budget 150K DH · veut investir à Berkane · ne peut pas superviser quotidiennement
+Persona 2 -- Fatima (Diplômée, Berkane)
+
+ Product Requirements Document -- Invest Maroc                                                       2
+Budget 30K DH · cherche un premier business · temps plein disponible
+Persona 3 -- Mohamed (Fonctionnaire, Oujda)
+Budget 80K DH · veut un revenu complémentaire · peu de temps disponible
+Persona 4 -- Khadija (Femme entrepreneur, Nador)
+Budget 50K DH · veut un business gérable seule · près de chez elle
+
+Niveau 2 -- Institutions (Radar Layer)
+
+Persona 5 -- Attijariwafa Bank (Département MRE + PME)
+200 000+ dossiers/an · besoin d'évaluation rapide du potentiel de chaque projet
+Persona 6 -- CRI Oriental (Centre Régional d'Investissement)
+Suit les projets de sa région · veut une vision unifiée en temps réel
+Persona 7 -- PME Sous-traitant
+Cherche les grands projets publics avant leur lancement pour se positionner
+
+3. Architecture -- 7 Agents sur 2 couches
+
+Vue d'ensemble
+
+
+
+                 INVESTMAP MAROC                                             
+
+
+
+ RADAR LAYER                                      INVEST LAYER             
+
+ (Macro -- National)                              (Micro -- Local)         
+
+
+
+                                                                         
+
+ Agent 6                                         Agent 1: Location Intel. 
+
+ Data Collector                                  Agent 2: Market Demand    
+
+  scraping sources  Agent 3: Business Matching 
+
+                                                 Agent 4: Admin Navigator 
+
+ Agent 7                                         Agent 5: Success Predictor 
+
+ Project Analyzer                                                        
+
+  LLM extraction                                                         
+
+                                                                         
+
+
+
+   échange de données bidirectionnel
+
+
+
+          DASHBOARD UNIFIÉ                                                   
+
+ Product Requirements Document -- Invest Maroc                                   3
+    Vue Particulier · Vue Institution · Vue Connectée 
+   
+
+4. Les 7 Agents en détail
+
+INVEST LAYER
+
+Agent 1 -- Location Intelligence
+
+Question: "Qu'est-ce qui existe déjà dans ce quartier?"
+Sources: Google Maps Places API · HCP open data · OpenStreetMap
+Output:
+
+   {
+      "pharmacies_1km": 0,
+      "population_radius": 12400,
+      "avg_income": 4800,
+      "commercial_gaps": ["pharmacie", "papeterie", "lavage_auto"]
+
+   }
+
+Agent 2 -- Market Demand
+
+Question: "Qu'est-ce que les gens cherchent sans trouver?"
+Sources (100% légales): Google Trends API · Google Maps Reviews (NLP) · Google Places
+"Permanently Closed"
+Output:
+
+   {
+      "pharmacie_search_volume": 340,
+      "demand_signal": "forte",
+      "seasonality": ["hiver", "ramadan"],
+      "top_complaints": ["trop loin", "pas dans ce quartier"]
+
+   }
+
+Agent 3 -- Business Matching
+
+Question: "Quels business correspondent au profil et au budget?"
+Inputs: résultats Agents 1+2 · budget · disponibilité · profil
+Output: Top 3 business + coûts réels + revenus estimés + délai ROI
+
+ Product Requirements Document -- Invest Maroc                                         4
+Agent 4 -- Administrative Navigator
+
+Question: "Comment démarrer légalement selon mon profil?"
+
+Profil         Démarches spécifiques
+
+MRE            DRI + Office des Changes + MDM Tamwil (50%)
+
+Résident       RC + Patente + CNSS
+
+Jeune diplômé  Auto-entrepreneur + Intelaka
+
+Femme entrepreneur CRI + Maroc PME + Moukawalati
+
+Fonctionnaire  Déclaration activité secondaire
+
+ Agent 5 -- Success Predictor (Différenciateur clé Invest Layer)
+
+Question: "Est-ce que CE business va réussir ICI spécifiquement?"
+
+def predict_success(location, demand, business_type, city, profil
+e):
+
+       score = 50
+
+        # Facteur concurrence
+        if location['competitors_1km'] == 0:
+
+               score += 25
+        elif location['competitors_1km'] <= 2:
+
+               score += 10
+        else:
+
+               score -= 15
+
+        # Facteur demande
+        score += demand['search_volume_score'] * 0.15
+
+        # Facteur historique fermetures (le plus important)
+        closures = get_historical_closures(city, business_type)
+        score -= closures * 8
+
+        # Facteur macro (NOUVEAU -- alimenté par Agent 6)
+        nearby_projects = get_radar_projects(city, radius=50km)
+        if nearby_projects:
+
+               score += min(len(nearby_projects) * 5, 20)
+
+        return clamp(score, 0, 100)
+
+ Product Requirements Document -- Invest Maroc                     5
+ Nouveau: Agent 5 intègre maintenant les données du Radar pour booster le score
+
+quand un grand projet est détecté à proximité
+
+RADAR LAYER
+
+ Agent 6 -- Data Collector (Différenciateur clé Radar Layer)
+
+Question: "Quels grands projets d'investissement sont annoncés au Maroc?"
+Sources scrapées toutes les 24h:
+
+Source           Type                           Données
+                                                Projets approuvés par CRI
+cri-invest.ma    Officielle                     Annonces ministérielles
+                                                AMDIE -- projets étrangers
+mmsp.gov.ma      Officielle                     Annonces économiques
+                                                Projets sectoriels
+investinmorocco.com Officielle                  Plan accélération industrielle
+
+medias24.com     Presse
+
+leconomiste.com  Presse
+
+mapmaroc.gov.ma Officielle
+
+Méthode de collecte:
+
+   async def collect_projects():
+          for source in SOURCES:
+                 raw_html = await scrape(source)
+                 articles = extract_articles(raw_html)
+                 for article in articles:
+                        if is_investment_related(article):
+                                project = Agent7.analyze(article)
+                                await db.upsert_project(project)
+
+ Agent 7 -- Project Analyzer (Différenciateur clé Radar Layer)
+
+Question: "Quelles informations structurées peut-on extraire de ce texte?"
+Input: texte brut (article, communiqué, annonce)
+LLM Prompt:
+
+Extrait les informations d'investissement suivantes du texte.
+Réponds UNIQUEMENT en JSON valide.
+
+{
+   "nom_projet": string,
+
+ Product Requirements Document -- Invest Maroc                                   6
+      "secteur": enum[agriculture|energie|tourisme|industrie|infrastru
+   cture|immobilier|tech|autre],
+
+      "region": enum[12 régions du Maroc],
+      "montant_mad": number|null,
+      "promoteur": string,
+      "phase": enum[planifié|en_cours|complété],
+      "date_lancement": string|null,
+      "emplois_crees": number|null,
+      "source_url": string,
+      "date_collecte": date
+   }
+
+Output exemple:
+
+   {
+      "nom_projet": "Nador West Med Phase 2",
+      "secteur": "infrastructure",
+      "region": "Oriental",
+      "montant_mad": 10000000000,
+      "promoteur": "Agence Nador West Med",
+      "phase": "en_cours",
+      "date_lancement": "2026",
+      "emplois_crees": 15000,
+      "source_url": "medias24.com/...",
+      "date_collecte": "2026-05-14"
+
+   }
+
+5. Spécifications Fonctionnelles -- 4 Écrans (UX Unifiée)
+
+   Principe directeur : Un seul produit, pas deux. La bifurcation Invest/Radar est invisible --
+   elle se fait dans le questionnaire et adapte le dashboard automatiquement. L'utilisateur ne
+   choisit jamais entre deux modes.
+
+Écran 1 -- Landing (10 secondes pour convaincre)
+
+Objectif : Un seul CTA. Pas de choix entre "Invest" et "Radar".
+Contenu :
+
+     Headline : "Trouve le bon business. Au bon endroit. Maintenant."
+     Sous-titre : "Des données réelles sur ton quartier -- pas des opinions générales."
+
+ Product Requirements Document -- Invest Maroc                                                   7
+     4 chiffres choc : 14 200 faillites · 78/100 score réel · 847 projets surveillés · 0 plateforme
+     similaire
+
+     Un seul bouton CTA : "Analyser mon opportunité "
+Règle UX clé : Pas de mention de "Invest" ou "Radar" -- une seule entrée pour tout le monde.
+
+Écran 2 -- Questionnaire intelligent (bifurcation invisible)
+
+Objectif : 3 questions max · < 60 secondes · le profil détermine le dashboard
+Questions :
+
+ 1. Je suis... -- MRE / Diplômé / Femme entrepreneur / CRI ou Banque / Fonctionnaire / Autre
+ 2. Ma ville cible -- autocomplete (5 villes pilotes) + quartier optionnel
+ 3. Mon budget -- ­30K / 30K­150K / 150K­500K / +500K / Pas de budget fixe
+Bifurcation invisible selon le profil :
+
+Profil                                          Question budget Dashboard résultant
+
+MRE / Diplômé / Femme / Fonctionnaire Visible               Dashboard Invest local
+
+CRI / Banque / Institution                      Masquée     Dashboard Radar national
+
+L'utilisateur ne voit pas deux produits différents. Le même bouton "Analyser" mène au
+même écran, adapté à son profil.
+
+Écran 3 -- Dashboard unifié (le coeur du projet)
+
+Objectif : Carte + analyse côte à côte · Invest et Radar dans le même écran
+Layout -- 2 colonnes :
+
+
+
+ Hassan · MRE · Berkane · 150K DH                                    
+
+                                                                       
+        Carte locale                            Top opportunités
+
+ (Mapbox)                                                    78/100  
+                                                 Pharmacie   71/100   
+                                                 Papeterie   29/100    
+                                                 Vêtements             
+        pins locaux
+
+        pins Radar
+
+ (temps réel)                                    [Voir rapport ]     
+
+
+
+  Radar : Nador West Med à 60km  3 opportunités 
+
+ boostées détectées                                         [Voir ]                  
+
+
+
+ Product Requirements Document -- Invest Maroc                                                       8
+Comportement selon le profil :
+
+Profil               Carte                      Panel droit              Radar Alert
+
+Individu (MRE, diplômé...) Zoom local (quartier) Top 3 opportunités + scores En bas, cliquable
+
+Institution (CRI, banque) Zoom national (Maroc) Liste projets + filtres  Section principale
+
+Pins sur la carte :
+
+Pin vert  opportunité locale détectée (Invest Layer)
+
+Pin orange  grand projet national (Radar Layer)
+
+Pin bleu  projet planifié (Radar Layer)
+
+Radar Alert (toujours en bas de l'écran pour les particuliers) :
+
+ Radar : Nador West Med (10 Mds DH) à 60km
+ 3 nouvelles opportunités boostées près de toi
+[Voir les opportunités liées ]
+
+Écran 4 -- Rapport final personnalisé
+
+Objectif : Score · démarches · connexion Radar · export · tout dans un scroll
+Narrative logique : "Voici quoi faire  comment le faire  ce que le Radar ajoute en bonus."
+Structure du rapport :
+
+ 1. Score de succès en grand (78/100) + business + localisation
+ 2. Estimation financière : investissement · revenu mensuel · ROI
+ 3. Pourquoi ce score : facteurs positifs + risques
+ 4. Étapes administratives personnalisées selon le profil
+ 5. Section Radar : opportunités boostées par les grands projets proches
+ 6. Business à éviter dans ce quartier (avec raisons historiques)
+  7. Boutons : Télécharger PDF · Activer alertes Radar
+Étapes administratives différenciées par profil :
+
+Profil               Étapes spécifiques
+
+MRE                  DRI (30j)  RC (2 sem.)  Licence  MDM Tamwil 50%
+
+Diplômé              Auto-entrepreneur (1 sem.)  Patente  Intelaka
+
+Femme entrepreneur RC  Maroc PME  Moukawalati
+
+Fonctionnaire        Déclaration activité secondaire  statut compatible
+
+Section Radar dans le rapport :
+
+ Product Requirements Document -- Invest Maroc                                                  9
+ Opportunités boostées par le Radar
+Nador West Med à 60km -- 15 000 emplois prévus
+
+ Station-service route du port : 94/100 (+16 pts vs score de bas
+e)
+ Restaurant ouvriers : 87/100 (+12 pts)
+ Entrepôt logistique : 82/100 (+9 pts)
+
+   Ces scores intègrent l'impact du grand projet sur la demande local
+   e.
+
+Écran Loading (entre Écran 2 et Écran 3) :
+
+"Agent 1 analyse les commerces de ton quartier..."
+"Agent 2 mesure la demande locale..."
+"Agent 6 vérifie les grands projets près de toi..."
+"Agent 5 calcule la probabilité de succès..."
+"Génération de ta carte d'investissement..."
+
+6. Stack Technique
+
+Couche         Technologie                      Justification
+
+Frontend       React.js + Mapbox GL JS          Cartes interactives nationales + locales
+
+Backend        FastAPI (Python)                 Async natif pour scraping
+
+AI Orchestration LangChain                      Multi-agent natif
+
+LLM            Claude API (claude-sonnet-4-6) Extraction + rapports
+
+Scraping       BeautifulSoup + Playwright       Sources web statiques + dynamiques
+
+Maps           Google Maps Places API           Données concurrents locaux
+
+Demand         Google Trends API                Volume recherche local
+
+Database       PostgreSQL + PostGIS             Requêtes geo + projets nationaux
+
+Cache          Redis                            Évite répétition scraping
+
+Scheduler      APScheduler                      Collecte automatique toutes les 24h
+
+Déploiement    Docker + Nginx                   Stack identique au PFA
+
+APIs et coûts hackathon
+
+Service        Coût
+
+Google Maps Places 0 DH (free tier)
+
+Google Trends  0 DH
+
+ Product Requirements Document -- Invest Maroc                                            10
+Service               Coût
+
+Claude API            ~10-20 DH
+
+Mapbox                0 DH (free tier)
+
+Scraping              0 DH
+
+7. Modèle Économique
+
+Modèle principal -- B2B double segment
+
+Segment 1 -- Banques & CRI (Radar + Invest)
+
+Client                Produit                               Prix           Revenu potentiel
+
+Attijariwafa          API évaluation dossiers 50 DH/rapport                10M DH/an
+
+CRI (12 régions) Dashboard Radar régional 120K DH/région/an 1,44M DH/an
+
+Banques (5 total) API complète                              50 DH/rapport  25M DH/an
+
+Segment 2 -- PME & Sous-traitants
+
+Produit                        Prix                   Cible
+                                                      PME cherchant marchés publics
+Abonnement Radar PME 299 DH/mois                      Investisseurs sectoriels
+
+Alertes sectorielles           99 DH/mois
+
+Segment 3 -- Grand public (Invest Layer)
+
+Produit                                         Prix
+
+Rapport investissement complet 299 DH/rapport
+
+Abonnement mensuel                              99 DH/mois
+
+8. Plan 36 heures -- Stratégie de priorité
+
+Principe directeur
+
+   Invest Layer fonctionne à 100% · Radar Layer = prototype convaincant
+
+Le jury doit voir les DEUX niveaux -- mais seul Invest Layer est fully fonctionnel.
+Radar Layer avec 20 projets hardcodés suffit pour valider le concept.
+
+Répartition équipe
+
+Membre                Rôle                            Responsabilités
+Anouar                                                LangChain · Agent 5+7 · Claude API · FastAPI · Docker · Pitch
+                      AI Lead +
+                      Backend
+
+ Product Requirements Document -- Invest Maroc                                                                       11
+Membre    Rôle                                  Responsabilités
+Marouane  Data + Radar                          Agent 6 (scraping) · Agent 1+2 · PostgreSQL · Dataset projets
+Aymen     Frontend                              nationaux
+                                                React UI · Mapbox national + local · Agent 3+4 · Dashboard 3 vues
+
+Timeline détaillée
+
+H0  H6 : Setup & Data
+     Réunion 30 min : validation architecture finale
+     GitHub repo + branches
+     .env partagé (API keys)
+     Docker compose skeleton
+     Dataset Berkane hardcoded (Invest Layer)
+     Dataset 20 projets nationaux hardcodés (Radar Layer)
+     PostgreSQL + PostGIS configuré
+
+H6  H16 : Core -- Invest Layer en priorité
+     Agent 1 : Google Maps  Berkane
+     Agent 3 : matching algorithm
+     Agent 5 : success predictor (avec bonus Radar)
+     Agent 4 : JSON admin par profil
+     Agent 2 : Google Trends + Maps Reviews
+     Test des 5 agents en isolation
+
+H16  H22 : Radar Layer prototype
+     Agent 7 : LLM extraction (test sur 5 articles réels)
+     Agent 6 : scraping 2 sources (medias24 + cri-invest)
+     Base de données 20 projets structurés
+     Carte Maroc nationale avec pins
+
+H22  H28 : Frontend + Intégration
+     React : 3 vues (Particulier / Institution / Connexion)
+     Mapbox : carte nationale + carte locale
+     Connexion Radar  Agent 5 (notification)
+     Claude API : rapport narratif
+     Tests end-to-end des 2 scénarios
+
+ Product Requirements Document -- Invest Maroc                                                                     12
+H28  H34 : Demo + Pitch
+     Scénario Hassan complet (Invest Layer)
+     Scénario CRI Oriental (Radar Layer)
+     Démonstration connexion : Nador West Med  opportunités Berkane
+     Slides (6 max)
+     3 phrases-choc mémorisées
+     Vidéo backup enregistrée
+
+H34  H36 : Buffer
+     Derniers bugs
+     Screenshots backup
+     Vérification démo mobile
+
+9. Demo Scenarios -- 3 scénarios
+
+Scénario 1 -- Hassan (Particulier, MRE)
+
+   Input: MRE · Berkane · Al Massira · 150 000 DH · 1 visite/3 mois
+
+   Output:
+
+   Pharmacie -- Score: 78/100
+   0 concurrent dans 1.2km
+   Nador West Med à 60km  demande croissante
+   15 000­22 000 DH/mois net
+   DRI + RC + Licence Santé + MDM Tamwil 50%
+   Vêtements: 29/100 (3 fermetures ici)
+
+Scénario 2 -- CRI Oriental (Institution, Radar)
+
+   Input: Dashboard Radar · Région Oriental · Tous secteurs
+
+   Output:
+
+   Carte: 8 projets en cours dans la région
+   Total: 14,3 milliards DH engagés
+   Nador West Med: 10 Mds · 65% complété
+   Parc éolien Taza: 800M DH · planifié
+
+            Filter: Énergie > 100M DH  2 projets
+
+ Product Requirements Document -- Invest Maroc                       13
+Scénario 3 -- La connexion magique (Demo finale)
+
+"Nador West Med vient d'être détecté par le Radar
+ dans la région de Berkane (60km)"
+
+ InvestMap notifie Hassan:
+   "Nouvelle opportunité détectée près de toi!
+     Station-service sur route du port: 94/100
+     Restaurant ouvriers: 87/100
+     Entrepôt logistique: 82/100
+     Investis maintenant -- avant 2027"
+
+ 10. Pitch -- Les 3 phrases qui gagnent
+
+Phrase 1 -- Double problème (l'ouverture)
+
+   "Au Maroc, deux réalités coexistent : des particuliers avec du capital qui ne savent pas où
+   investir -- et des milliards de dirhams de projets d'investissement annoncés chaque année que
+   personne ne relie aux opportunités locales. InvestMap Maroc résout les deux en même temps."
+
+Phrase 2 -- La connexion unique (pendant la démo)
+
+   "Quand notre Radar détecte que Nador West Med -- un port à 10 milliards de dirhams -- est en
+   construction, notre système dit automatiquement à Hassan à Amsterdam : voici 3 opportunités
+   dans ta région avec des scores de 94, 87, et 82 sur 100. C'est ça l'innovation -- connecter la
+   macro à la micro."
+
+Phrase 3 -- Le marché (la clôture)
+
+   "Deux segments B2B : les banques qui traitent des centaines de milliers de dossiers intègrent
+   notre API Invest à 50 DH par rapport -- et les CRI qui veulent une vision unifiée de leur région
+   s'abonnent au Radar à 120 000 DH par an. Attijariwafa plus les 12 CRI représentent plus de 11
+   millions de dirhams de revenu annuel récurrent."
+
+ 11. Questions jury et réponses
+
+Question                   Réponse
+
+"Qu'est-ce qui vous        "ChatGPT donne des opinions générales. Nous connectons des données
+différencie de ChatGPT ?"  locales réelles avec un radar national de projets -- une combinaison
+                           qu'aucun LLM ne peut reproduire seul."
+
+"D'où vient le Radar ?"    "Scraping automatique de sources officielles marocaines (CRI, AMDIE,
+                           presse économique) + extraction LLM structurée. Agent 6 collecte toutes les
+
+ Product Requirements Document -- Invest Maroc                                                          14
+Question                  Réponse
+                          24h."
+
+"C'est pas trop complexe  "Invest Layer fonctionne à 100%. Radar Layer est un prototype avec 20
+pour un hackathon ?"      projets réels -- suffisant pour valider l'architecture. La connexion entre les
+                          deux est démontrée en live."
+
+"Pourquoi les CRI         "Aujourd'hui ils suivent les projets manuellement sur des dizaines de sites.
+paieraient ?"             Notre dashboard unifié leur donne une vision régionale en temps réel -- c'est
+                          120 000 DH/an pour économiser des semaines de travail."
+
+"Et la concurrence ?"     "AMDIE publie des listes statiques. CRI-Invest est fragmenté par région.
+                          Aucune plateforme ne connecte le macro-investissement aux opportunités
+                          micro-locales. Ce pont n'existe pas."
+
+ 12. Risques et mitigations
+
+Risque                                          Probabilité  Impact  Mitigation
+Scraping bloqué pendant                         Moyen        Élevé
+démo                                            Élevé        Élevé   20 projets hardcodés + demo
+                                                                     offline
+7 agents trop ambitieux
+                                                                     Invest (1+3+5) à 100% · Radar =
+Jury sceptique sur Radar                        Moyen        Moyen   prototype
+
+Connexion RadarInvest                           Moyen        Moyen   Montrer Agent 7 en live sur un
+instable                                                             article réel
+
+API Google Maps rate limit Moyen                             Élevé   Notif hardcodée pour Nador West
+                                                                     Med
+
+                                                                     Cache Redis + Berkane hardcoded
+
+ 13. Critères de succès -- Miathon
+
+Minimum viable demo (obligatoire)
+
+     Scénario Hassan fonctionne (Invest Layer complet)
+     Carte Maroc avec 20 projets visibles (Radar Layer)
+     Score 78/100 affiché pour pharmacie Berkane
+     Démonstration connexion Radar  opportunité locale
+     Étapes administratives selon profil MRE
+
+Bonus (si le temps le permet)
+
+     Agent 6 scrape en live pendant la démo (effet wow)
+     Scénario CRI Oriental fonctionnel
+     Filtres Radar opérationnels
+
+ Product Requirements Document -- Invest Maroc                                                            15
+     Export PDF du rapport
+
+ 14. Sources et références
+
+     Office des Changes -- Rapport annuel transferts MRE 2024
+     CESE -- Avis sur les transferts de fonds des MRE (2022)
+     HCP -- RGPH 2024 + Enquête secteur informel Mai 2025
+     Inforisk / Allianz -- Baromètre défaillances 2023/2024
+     AMDIE -- Bilan investissements directs étrangers 2024
+     Banque Mondiale -- Financial Inclusion Morocco 2025
+     IMF -- Morocco Article IV Consultation 2025/2026
+     MDM Invest -- Guide investisseurs MRE 2024
+     HCP -- Enquête emploi chômage jeunes 2025
+     Agence Nador West Med -- Rapport d'avancement 2025
+
+  Note v3.0 : Ce PRD intègre le Radar des Projets d'Investissement (v2.0 Radar) avec
+
+   Invest Maroc (v2.0 Invest). Priorité hackathon : Invest Layer 100% fonctionnel + Radar
+   Layer prototype convaincant. La connexion entre les deux couches est le différenciateur
+   absolu de ce projet.
+
+ENIAD Berkane · Université Mohammed Premier · Miathon 3ème édition · 2026
+
+ Product Requirements Document -- Invest Maroc                                              16
+

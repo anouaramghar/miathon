@@ -131,24 +131,45 @@ function NeighborhoodMapLeaflet({ scenario, height = 440 }) {
       );
 
     // ── Competitor markers ──
+    // Seeded pseudo-random for deterministic but organic placement
+    function seedHash(str) {
+      let h = 0;
+      for (let i = 0; i < str.length; i++) {
+        h = ((h << 5) - h + str.charCodeAt(i)) | 0;
+      }
+      return h;
+    }
+    function seededRand(seed) {
+      const x = Math.sin(seed) * 10000;
+      return x - Math.floor(x);  // 0..1
+    }
+
     scenario.competitors.forEach(c => {
       if (c.count === 0) return;
       const color = COMPETITOR_COLORS[c.type] || '#555';
       const emoji = COMPETITOR_ICONS[c.type] || '📍';
 
       if (c.names && c.names.length > 0) {
-        // Individual icon markers — spread around base position
+        // Individual icon markers — organic scatter around base position
         const n = c.names.length;
-        const spread = n <= 1 ? 0 : (n === 2 ? 3.5 : 4.8);
         const countNote = c.count > n
           ? `parmi ${c.count} dans la zone`
           : 'concurrent actif';
 
         c.names.forEach((name, i) => {
-          const angle = n === 1 ? 0 : (i / n) * 2 * Math.PI - Math.PI / 4;
-          const offY  = n === 1 ? 0 : Math.cos(angle) * spread;
-          const offX  = n === 1 ? 0 : Math.sin(angle) * spread * 1.2;
-          const pos   = toLatLng(c.lat + offY, c.lng + offX);
+          // Use name hash for deterministic but natural-looking offsets
+          const hash = seedHash(name + c.type + i);
+          const r1 = seededRand(hash);
+          const r2 = seededRand(hash + 1);
+          const r3 = seededRand(hash + 2);
+
+          // Organic distance: varies between 1.5 and 6 pct-units, non-uniform
+          const dist = n <= 1 ? 0 : (2.0 + r1 * 4.5);
+          // Random angle with slight bias toward street-like directions
+          const angle = n <= 1 ? 0 : (r2 * 2 * Math.PI + i * 1.3);
+          const offY = n <= 1 ? 0 : Math.cos(angle) * dist * (0.7 + r3 * 0.6);
+          const offX = n <= 1 ? 0 : Math.sin(angle) * dist * (0.8 + r3 * 0.5);
+          const pos  = toLatLng(c.lat + offY, c.lng + offX);
 
           const html = `<div class="lf-comp-icon${c.far ? ' far' : ''}" style="background:${color}">${emoji}</div>`;
           const icon = L.divIcon({ className: '', html, iconSize: [28, 28], iconAnchor: [14, 14] });
@@ -163,8 +184,11 @@ function NeighborhoodMapLeaflet({ scenario, height = 440 }) {
             );
         });
       } else {
-        // Fallback: icon marker with type label
-        const pos   = toLatLng(c.lat, c.lng);
+        // Fallback: icon marker with type label — add slight jitter
+        const hash = seedHash(c.type);
+        const jY = (seededRand(hash) - 0.5) * 2;
+        const jX = (seededRand(hash + 1) - 0.5) * 2;
+        const pos   = toLatLng(c.lat + jY, c.lng + jX);
         const label = c.count > 1 ? `${c.type} ×${c.count}` : c.type;
         const html  = `<div class="lf-comp-icon${c.far ? ' far' : ''}" style="background:${color}">${emoji}</div>`;
         const icon  = L.divIcon({ className: '', html, iconSize: [28, 28], iconAnchor: [14, 14] });

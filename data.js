@@ -237,12 +237,12 @@ const SCENARIOS = {
       center: [34.9197, -2.3197],
     },
     competitors: [
-      { type: 'Café',               count: 6, lat: 35, lng: 40, names: ['Café Atlas', 'Café Massira', 'Café Saada', 'Café Zitoun'] },
-      { type: 'Restaurant',         count: 4, lat: 55, lng: 30, names: ['Snack El Fath', 'Resto Manar', 'Snack Berkane', 'Resto Zitoun'] },
-      { type: 'Boulangerie',        count: 3, lat: 70, lng: 55, names: ['Boulangerie Rif', 'Boulangerie Salam', 'Boulangerie Madina'] },
-      { type: 'Magasin vêtements',  count: 2, lat: 25, lng: 65, names: ['Layla Mode', 'Mode El Baz'] },
-      { type: 'Pharmacie (1.8km)',  count: 1, lat: 88, lng: 80, far: true, names: ['Pharmacie Centrale'] },
-      { type: 'Pharmacie (1.8km)',  count: 1, lat: 12, lng: 14, far: true, names: ['Pharmacie Hay Salam'] },
+      { type: 'Café',               count: 6, lat: 32, lng: 37, names: ['Café Atlas', 'Café Massira', 'Café Saada', 'Café Zitoun'] },
+      { type: 'Restaurant',         count: 4, lat: 58, lng: 26, names: ['Snack El Fath', 'Resto Manar', 'Snack Berkane', 'Resto Zitoun'] },
+      { type: 'Boulangerie',        count: 3, lat: 73, lng: 52, names: ['Boulangerie Rif', 'Boulangerie Salam', 'Boulangerie Madina'] },
+      { type: 'Magasin vêtements',  count: 2, lat: 22, lng: 68, names: ['Layla Mode', 'Mode El Baz'] },
+      { type: 'Pharmacie (1.8km)',  count: 1, lat: 86, lng: 78, far: true, names: ['Pharmacie Centrale'] },
+      { type: 'Pharmacie (1.8km)',  count: 1, lat: 14, lng: 11, far: true, names: ['Pharmacie Hay Salam'] },
     ],
     topRecommendation: {
       business: 'Pharmacie',
@@ -305,10 +305,10 @@ const SCENARIOS = {
       center: [34.9197, -2.3197],
     },
     competitors: [
-      { type: 'Café',              count: 6, lat: 35, lng: 40, names: ['Café Atlas', 'Café Massira', 'Café Saada', 'Café Zitoun'] },
-      { type: 'Restaurant',        count: 4, lat: 55, lng: 30, names: ['Snack El Fath', 'Resto Manar', 'Snack Berkane', 'Resto Zitoun'] },
-      { type: 'Boulangerie',       count: 3, lat: 70, lng: 55, names: ['Boulangerie Rif', 'Boulangerie Salam', 'Boulangerie Madina'] },
-      { type: 'Magasin vêtements', count: 2, lat: 25, lng: 65, names: ['Layla Mode', 'Mode El Baz'] },
+      { type: 'Café',              count: 6, lat: 33, lng: 42, names: ['Café Atlas', 'Café Massira', 'Café Saada', 'Café Zitoun'] },
+      { type: 'Restaurant',        count: 4, lat: 57, lng: 28, names: ['Snack El Fath', 'Resto Manar', 'Snack Berkane', 'Resto Zitoun'] },
+      { type: 'Boulangerie',       count: 3, lat: 71, lng: 53, names: ['Boulangerie Rif', 'Boulangerie Salam', 'Boulangerie Madina'] },
+      { type: 'Magasin vêtements', count: 2, lat: 24, lng: 67, names: ['Layla Mode', 'Mode El Baz'] },
     ],
     topRecommendation: {
       business: 'Centre photocopie & papeterie',
@@ -368,10 +368,10 @@ const SCENARIOS = {
       center: [33.5892, -7.6321],
     },
     competitors: [
-      { type: 'Café',      count: 14, lat: 30, lng: 25, names: ['Café Maarif', 'Café Liberté', 'Le Commerce', 'Café Victoria'] },
-      { type: 'Restaurant', count: 9, lat: 60, lng: 35, names: ['Le Marrakchi', 'Snack Le Coq', 'Chez Sylvana'] },
-      { type: 'Épicerie',   count: 8, lat: 70, lng: 55, names: ['Épicerie Badr', 'Mini Marché Hassan', 'Chez Mustapha'] },
-      { type: 'Coworking',  count: 1, lat: 20, lng: 72, far: true, names: ['ImpactHub Maarif'] },
+      { type: 'Café',      count: 14, lat: 28, lng: 23, names: ['Café Maarif', 'Café Liberté', 'Le Commerce', 'Café Victoria'] },
+      { type: 'Restaurant', count: 9, lat: 62, lng: 33, names: ['Le Marrakchi', 'Snack Le Coq', 'Chez Sylvana'] },
+      { type: 'Épicerie',   count: 8, lat: 68, lng: 57, names: ['Épicerie Badr', 'Mini Marché Hassan', 'Chez Mustapha'] },
+      { type: 'Coworking',  count: 1, lat: 18, lng: 74, far: true, names: ['ImpactHub Maarif'] },
     ],
     topRecommendation: {
       business: 'Espace coworking spécialisé',
@@ -433,10 +433,10 @@ const SCENARIOS = {
       center: [35.7395, -5.8590],
     },
     competitors: [
-      { type: 'Café',              count: 8,  lat: 30, lng: 35, names: ['Café Détroit', 'Café Boukhalef', "L'Horizon", 'Café Bab'] },
-      { type: 'Restaurant',        count: 5,  lat: 55, lng: 60, names: ['Snack El Boughaz', 'Resto Andalus', 'Chez Malek'] },
-      { type: 'Pharmacie',         count: 2,  lat: 70, lng: 30, names: ['Pharmacie Boukhalef', 'Pharmacie Tanja'] },
-      { type: 'Résidence meublée', count: 1,  lat: 20, lng: 70, far: true, names: ['Résidence Sidi Sghir'] },
+      { type: 'Café',              count: 8,  lat: 27, lng: 38, names: ['Café Détroit', 'Café Boukhalef', "L'Horizon", 'Café Bab'] },
+      { type: 'Restaurant',        count: 5,  lat: 53, lng: 62, names: ['Snack El Boughaz', 'Resto Andalus', 'Chez Malek'] },
+      { type: 'Pharmacie',         count: 2,  lat: 72, lng: 28, names: ['Pharmacie Boukhalef', 'Pharmacie Tanja'] },
+      { type: 'Résidence meublée', count: 1,  lat: 17, lng: 73, far: true, names: ['Résidence Sidi Sghir'] },
     ],
     topRecommendation: {
       business: 'Résidence étudiante meublée',
@@ -497,10 +497,10 @@ const SCENARIOS = {
       center: [30.4183, -9.5982],
     },
     competitors: [
-      { type: 'Café',      count: 7, lat: 35, lng: 40, names: ['Café Souss', 'Café Tagma', 'Café Bienvenue', 'Café Agadir'] },
-      { type: 'Restaurant', count: 6, lat: 55, lng: 30, names: ['Snack Tigra', 'Restaurant Al Mina', 'Chez Driss', 'Pizzeria Agadir'] },
-      { type: 'Épicerie',  count: 5, lat: 25, lng: 70, names: ['Épicerie Draa', 'Chez Bouchaib', 'Mini Marché Souss'] },
-      { type: 'Hôtel',     count: 2, lat: 75, lng: 70, far: true, names: ['Palais des Roses', 'Hôtel Kenzi'] },
+      { type: 'Café',      count: 7, lat: 34, lng: 43, names: ['Café Souss', 'Café Tagma', 'Café Bienvenue', 'Café Agadir'] },
+      { type: 'Restaurant', count: 6, lat: 56, lng: 27, names: ['Snack Tigra', 'Restaurant Al Mina', 'Chez Driss', 'Pizzeria Agadir'] },
+      { type: 'Épicerie',  count: 5, lat: 23, lng: 72, names: ['Épicerie Draa', 'Chez Bouchaib', 'Mini Marché Souss'] },
+      { type: 'Hôtel',     count: 2, lat: 77, lng: 68, far: true, names: ['Palais des Roses', 'Hôtel Kenzi'] },
     ],
     topRecommendation: {
       business: 'Maison d\'hôtes / Riad boutique',
@@ -561,10 +561,10 @@ const SCENARIOS = {
       center: [33.9823, -6.8598],
     },
     competitors: [
-      { type: 'Café',      count: 9, lat: 30, lng: 35, names: ['Café Agdal', 'Le Diplomate', 'Café Rive G.', 'La Terrasse'] },
-      { type: 'Restaurant', count: 7, lat: 55, lng: 25, names: ['Borj Eddar', "Le Bistro d'Agdal", 'Snack Diwan', 'Resto Grill'] },
-      { type: 'Pharmacie', count: 3, lat: 20, lng: 65, names: ['Pharmacie Agdal', 'Pharmacie Hassan II', 'Pharmacie Souissi'] },
-      { type: 'Épicerie',  count: 6, lat: 70, lng: 60, names: ['Épicerie Agdal', 'Chez Karima', 'Mini Marché Ahmed'] },
+      { type: 'Café',      count: 9, lat: 31, lng: 33, names: ['Café Agdal', 'Le Diplomate', 'Café Rive G.', 'La Terrasse'] },
+      { type: 'Restaurant', count: 7, lat: 54, lng: 22, names: ['Borj Eddar', "Le Bistro d'Agdal", 'Snack Diwan', 'Resto Grill'] },
+      { type: 'Pharmacie', count: 3, lat: 19, lng: 67, names: ['Pharmacie Agdal', 'Pharmacie Hassan II', 'Pharmacie Souissi'] },
+      { type: 'Épicerie',  count: 6, lat: 72, lng: 58, names: ['Épicerie Agdal', 'Chez Karima', 'Mini Marché Ahmed'] },
     ],
     topRecommendation: {
       business: 'Agence social media & contenu',
