@@ -70,7 +70,7 @@ async def stream_job(job_id: str):
     queue = _jobs[job_id]
     try:
         while True:
-            event = await asyncio.wait_for(queue.get(), timeout=30.0)
+            event = await asyncio.wait_for(queue.get(), timeout=120.0)
             if event is None:
                 break
             yield f"event: {event['type']}\ndata: {json.dumps(event)}\n\n"
