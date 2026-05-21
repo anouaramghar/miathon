@@ -56,7 +56,7 @@ class Agent4Admin(BaseAgent):
 
     async def _run_live(self, context: dict) -> dict:
         import asyncio
-        await asyncio.sleep(18)  # space out requests to stay under free-tier rate limit
+        await asyncio.sleep(25)  # space out requests to stay under free-tier rate limit
         matches = context.get("matches", [])
         top_business = matches[0]["business"] if matches else "commerce général"
 

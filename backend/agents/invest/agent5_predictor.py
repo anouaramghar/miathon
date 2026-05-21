@@ -77,7 +77,7 @@ class Agent5Predictor(BaseAgent):
 
     async def _run_live(self, context: dict) -> dict:
         import asyncio
-        await asyncio.sleep(18)  # space out requests to stay under free-tier rate limit
+        await asyncio.sleep(25)  # space out requests to stay under free-tier rate limit
         location = context.get("location", {})
         demand   = context.get("demand", {})
         matches  = context.get("matches", [])
