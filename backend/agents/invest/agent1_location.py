@@ -15,6 +15,7 @@ class Agent1Location(BaseAgent):
                     {"type": "Café", "count": 6},
                     {"type": "Restaurant", "count": 4},
                     {"type": "Boulangerie", "count": 3},
+                    {"type": "Magasin vêtements", "count": 2},
                     {"type": "Pharmacie (1.8km)", "count": 1, "far": True},
                 ],
             }
