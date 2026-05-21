@@ -53,14 +53,19 @@ async def run_invest_pipeline(job_id: str, form: dict):
     queue = _jobs[job_id]
     context = form.copy()
 
-    for i, agent in enumerate(INVEST_AGENTS, start=1):
-        await queue.put({"type": "agent_start", "agent": i, "label": agent.label})
-        result = await agent.run(context)
-        context.update(result)
-        await queue.put({"type": "agent_done", "agent": i, "data": result})
+    try:
+        for i, agent in enumerate(INVEST_AGENTS, start=1):
+            await queue.put({"type": "agent_start", "agent": i, "label": agent.label})
+            result = await agent.run(context)
+            context.update(result)
+            await queue.put({"type": "agent_done", "agent": i, "data": result})
 
-    await queue.put({"type": "complete", "scenario": assemble_scenario(context)})
-    await queue.put(None)  # sentinel
+        await queue.put({"type": "complete", "scenario": assemble_scenario(context)})
+    except Exception as e:
+        print(f"[pipeline] unexpected error: {e}")
+        await queue.put({"type": "error", "message": str(e)})
+    finally:
+        await queue.put(None)  # sentinel — always sent so the stream never hangs
 
 async def stream_job(job_id: str):
     if job_id not in _jobs:

@@ -44,7 +44,7 @@ class Agent2Demand(BaseAgent):
 
     async def _run_live(self, context: dict) -> dict:
         # 1. Try Google Trends (may be rate-limited) in a thread
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         trends_result = await loop.run_in_executor(None, self._try_pytrends, context)
         if trends_result:
             return trends_result
