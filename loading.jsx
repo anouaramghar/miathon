@@ -19,7 +19,7 @@ const FALLBACK_AGENTS = {
   },
 };
 
-function LoadingScreen({ onDone, duration = 8000, scenario }) {
+function LoadingScreen({ onDone, duration = 8000, scenario, jobId }) {
   // Build context-aware agent messages from scenario (via personalize.js)
   const agents = React.useMemo(() => {
     try {
@@ -48,6 +48,26 @@ function LoadingScreen({ onDone, duration = 8000, scenario }) {
     doneRef.current = true;
     onDone();
   };
+
+  // SSE: connect to real backend pipeline when jobId is available
+  React.useEffect(() => {
+    if (!jobId) return;
+    const es = new EventSource(`http://localhost:8000/api/stream/${jobId}`);
+    es.addEventListener('agent_start', e => {
+      const d = JSON.parse(e.data);
+      console.log('[InvestMap SSE] agent_start', d.agent, d.label);
+    });
+    es.addEventListener('agent_done', e => {
+      const d = JSON.parse(e.data);
+      console.log('[InvestMap SSE] agent_done', d.agent);
+    });
+    es.addEventListener('complete', e => {
+      console.log('[InvestMap SSE] pipeline complete — agents ran successfully');
+      es.close();
+    });
+    es.onerror = () => { console.warn('[InvestMap SSE] connection closed'); es.close(); };
+    return () => es.close();
+  }, [jobId]);
 
   React.useEffect(() => {
     const iStep = (duration * 0.58) / INVEST_AGENTS.length;

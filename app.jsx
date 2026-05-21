@@ -30,6 +30,7 @@ function App() {
   const [form, setForm]               = useState(DEFAULT_FORM);
   const [scenarioKey, setScenarioKey] = useState('hassan');
   const [scenario, setScenario]       = useState(null); // personalized scenario
+  const [jobId, setJobId]             = useState(null);
   const [t, setTweak]                 = useTweaks(TWEAK_DEFAULTS);
   const prevInvestKey                 = useRef('hassan'); // remembers last investor scenario across macro switch
 
@@ -50,7 +51,17 @@ function App() {
       setScenarioKey(key);
       setScenario(window.SCENARIOS[key]);
     }
+    setJobId(null);
     setPhase('loading');
+    // Fire-and-forget backend call — SSE streams agent events to loading screen
+    fetch('http://localhost:8000/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form),
+    })
+      .then(r => r.json())
+      .then(d => { if (d.job_id) setJobId(d.job_id); })
+      .catch(() => console.warn('[investmap] backend not running — demo mode'));
   };
 
   const onLoadingDone = () => {
@@ -164,6 +175,7 @@ function App() {
           duration={t.loadingDuration * 1000}
           onDone={onLoadingDone}
           scenario={activeScenario}
+          jobId={jobId}
         />
       )}
 
