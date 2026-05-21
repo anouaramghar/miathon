@@ -19,7 +19,7 @@ const FALLBACK_AGENTS = {
   },
 };
 
-function LoadingScreen({ onDone, duration = 8000, scenario, jobId }) {
+function LoadingScreen({ onDone, duration = 8000, scenario, jobId, onResult }) {
   // Build context-aware agent messages from scenario (via personalize.js)
   const agents = React.useMemo(() => {
     try {
@@ -63,6 +63,12 @@ function LoadingScreen({ onDone, duration = 8000, scenario, jobId }) {
     });
     es.addEventListener('complete', e => {
       console.log('[InvestMap SSE] pipeline complete — agents ran successfully');
+      try {
+        const real = JSON.parse(e.data).scenario;
+        if (real && onResult) onResult(real);
+      } catch (err) {
+        console.warn('[InvestMap SSE] could not parse complete payload', err);
+      }
       es.close();
     });
     es.onerror = () => { console.warn('[InvestMap SSE] connection closed'); es.close(); };

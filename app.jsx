@@ -20,6 +20,31 @@ const DEFAULT_FORM = {
   budget: '',
 };
 
+// Hydrate the polished static scenario with the REAL agent outputs from the
+// live backend pipeline. We keep the static base for fields the agents don't
+// produce (map competitor positions, demographics, alternatives, financing)
+// and overlay only the genuinely AI-computed fields. Shapes match 1:1.
+function hydrateWithLiveData(base, real) {
+  if (!base || base.kind === 'institution') return base;
+  const rtop = real && real.topRecommendation;
+  if (!rtop || !rtop.business) return base;
+  const btop = base.topRecommendation || {};
+  return {
+    ...base,
+    topRecommendation: {
+      ...btop,
+      business:  rtop.business || btop.business,
+      score:     (rtop.score != null) ? rtop.score : btop.score,
+      verdict:   rtop.verdict || btop.verdict,
+      positives: (rtop.positives && rtop.positives.length) ? rtop.positives : btop.positives,
+      risks:     (rtop.risks && rtop.risks.length) ? rtop.risks : btop.risks,
+      finance:   rtop.finance || btop.finance,
+      admin:     (real.admin_steps && real.admin_steps.length) ? real.admin_steps : btop.admin,
+    },
+    _live: true,
+  };
+}
+
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "loadingDuration": 8
 }/*EDITMODE-END*/;
@@ -66,6 +91,17 @@ function App() {
 
   const onLoadingDone = () => {
     setPhase(activeScenario.kind === 'institution' ? 'cri' : 'dashboard');
+  };
+
+  // SSE 'complete' → overlay real agent output onto the current scenario.
+  // Dashboard reads activeScenario, so this updates the view live.
+  const onLiveResult = (real) => {
+    setScenario(prev => {
+      const fallback = window.SCENARIOS[scenarioKey] || window.SCENARIOS.hassan;
+      const merged = hydrateWithLiveData(prev || fallback, real);
+      if (merged && merged._live) console.log('[InvestMap] dashboard hydrated with real AI data');
+      return merged;
+    });
   };
 
   const quickFill = (key) => {
@@ -176,6 +212,7 @@ function App() {
           onDone={onLoadingDone}
           scenario={activeScenario}
           jobId={jobId}
+          onResult={onLiveResult}
         />
       )}
 
