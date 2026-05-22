@@ -26,6 +26,37 @@ REGION_CENTROIDS = {
 NOMINATIM = "https://nominatim.openstreetmap.org/search"
 NOMINATIM_HEADERS = {"User-Agent": "InvestMap-Maroc/1.0 hackathon@eniad.ma"}
 
+import unicodedata
+
+# Generic words that shouldn't drive duplicate detection.
+_STOPWORDS = {
+    "de", "du", "des", "la", "le", "les", "et", "a", "au", "aux", "el", "the", "of",
+    "projet", "project", "hotel", "mine", "port", "aeroport", "airport", "usine",
+    "developpement", "amenagement", "expansion", "extension", "parc", "centrale",
+    "edition", "limited", "phase", "maroc", "morocco", "new", "nouveau", "nouvelle",
+}
+
+
+def _name_tokens(name: str) -> set[str]:
+    s = unicodedata.normalize("NFKD", name.lower())
+    s = "".join(c for c in s if not unicodedata.combining(c))
+    return {t for t in "".join(c if c.isalnum() else " " for c in s).split()
+            if len(t) > 2 and t not in _STOPWORDS}
+
+
+def _is_dup(toks: set[str], seen: list[set[str]]) -> bool:
+    """Duplicate if the significant tokens are a subset of, or heavily overlap
+    (Jaccard >= 0.6), an already-seen project name."""
+    for prev in seen:
+        if not toks or not prev:
+            continue
+        if toks <= prev or prev <= toks:
+            return True
+        inter = len(toks & prev)
+        if inter and inter / len(toks | prev) >= 0.6:
+            return True
+    return False
+
 _SYSTEM = """Tu es un analyste qui extrait des projets d'investissement réels au Maroc
 à partir d'articles de presse. Tu réponds UNIQUEMENT en JSON valide, sans texte
 avant ou après. N'invente AUCUN projet : extrais seulement ceux explicitement
@@ -63,9 +94,9 @@ Règles :
 - "progress" : pourcentage d'avancement 0-100 si connu, sinon 0.
 - "jobs" : nombre d'emplois si mentionné, sinon null.
 - "source_url" : OBLIGATOIRE, l'URL exacte de l'article source.
-- Extrais TOUS les projets distincts mentionnés (industrie, énergie, infrastructure,
-  tourisme, immobilier, agriculture, tech), même si le montant n'est pas précisé.
-- Vise 12 à 20 projets distincts si l'information le permet. Ne duplique pas un même projet."""
+- Extrais TOUS les projets distincts réellement présents dans ces articles (industrie,
+  énergie, infrastructure, tourisme, immobilier, agriculture, tech), même si le montant
+  n'est pas précisé. N'INVENTE RIEN et ne force aucun nombre — uniquement ce qui est cité."""
 
 
 class Agent7Analyzer(BaseAgent):
@@ -74,40 +105,52 @@ class Agent7Analyzer(BaseAgent):
     async def _run_mock(self, context: dict) -> dict:
         return {"analyzed": 0}
 
+    BATCH_SIZE = 12
+
     async def analyze(self, articles: list[dict]) -> list[dict]:
-        """LLM-extract structured projects from articles, then geocode each."""
+        """Extract projects in small batches (thorough per-call), then merge,
+        dedup by name, geocode."""
         if not articles:
             return []
 
-        blob = "\n\n".join(
-            f"[{i+1}] {a['title']}\nURL: {a['url']}\n{a['content']}"
-            for i, a in enumerate(articles[:40])
-        )
-        prompt = _PROMPT.format(
-            articles=blob,
-            sectors=", ".join(SECTORS),
-            regions=", ".join(REGIONS),
-        )
+        batches = [articles[i:i + self.BATCH_SIZE] for i in range(0, len(articles), self.BATCH_SIZE)]
+        merged, seen_tokens = [], []
+        for bi, batch in enumerate(batches):
+            raw = await self._extract_batch(batch)
+            print(f"[Agent7] batch {bi+1}/{len(batches)}: {len(raw)} projects")
+            for p in raw:
+                toks = _name_tokens(p.get("name") or "")
+                if toks and not _is_dup(toks, seen_tokens):
+                    seen_tokens.append(toks)
+                    merged.append(p)
 
-        try:
-            result = await chat_json(
-                [{"role": "system", "content": _SYSTEM},
-                 {"role": "user", "content": prompt}],
-                max_tokens=6000,
-            )
-        except Exception as e:
-            print(f"[Agent7] LLM extraction failed: {e}")
-            return []
-
-        raw = result.get("projects", []) if isinstance(result, dict) else []
+        # Prioritize by amount, cap for a clean map.
+        merged.sort(key=lambda p: p.get("amount") or 0, reverse=True)
         projects = []
-        for i, p in enumerate(raw, start=1):
+        for i, p in enumerate(merged[:28], start=1):
             cleaned = self._clean(p, i)
             if cleaned:
                 projects.append(cleaned)
 
         await self._geocode_all(projects)
         return projects
+
+    async def _extract_batch(self, batch: list[dict]) -> list[dict]:
+        blob = "\n\n".join(
+            f"[{i+1}] {a['title']}\nURL: {a['url']}\n{(a['content'] or '')[:2500]}"
+            for i, a in enumerate(batch)
+        )
+        prompt = _PROMPT.format(articles=blob, sectors=", ".join(SECTORS), regions=", ".join(REGIONS))
+        try:
+            result = await chat_json(
+                [{"role": "system", "content": _SYSTEM},
+                 {"role": "user", "content": prompt}],
+                max_tokens=4096,
+            )
+            return result.get("projects", []) if isinstance(result, dict) else []
+        except Exception as e:
+            print(f"[Agent7] batch extraction failed: {e}")
+            return []
 
     def _clean(self, p: dict, idx: int) -> dict | None:
         name = (p.get("name") or "").strip()

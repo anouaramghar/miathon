@@ -5,26 +5,32 @@ from core.config import settings
 TAVILY_URL = "https://api.tavily.com/search"
 
 
-async def search(query: str, max_results: int = 6, days: int = 365) -> list[dict]:
-    """Run a Tavily search and return a list of {title, url, content} results.
+async def search(query: str, max_results: int = 6, days: int = 365, topic: str = "news") -> list[dict]:
+    """Run a Tavily search and return [{title, url, content}].
 
-    `days` limits results to recent news; raises on transport/auth errors so the
-    caller can decide whether to fall back."""
+    Fetches full page content (include_raw_content) so the extractor sees the
+    figures buried in article bodies, not just the snippet. `topic` is "news"
+    (recent press, bounded by `days`) or "general" (official/structured pages)."""
     payload = {
         "api_key": settings.tavily_api_key,
         "query": query,
         "search_depth": "advanced",
-        "topic": "news",
-        "days": days,
+        "topic": topic,
         "max_results": max_results,
         "include_answer": False,
-        "include_raw_content": False,
+        "include_raw_content": True,
     }
-    async with httpx.AsyncClient(timeout=30.0) as client:
+    if topic == "news":
+        payload["days"] = days
+    async with httpx.AsyncClient(timeout=40.0) as client:
         r = await client.post(TAVILY_URL, json=payload)
         r.raise_for_status()
         data = r.json()
     return [
-        {"title": x.get("title", ""), "url": x.get("url", ""), "content": x.get("content", "")}
+        {
+            "title": x.get("title", ""),
+            "url": x.get("url", ""),
+            "content": x.get("raw_content") or x.get("content", ""),
+        }
         for x in data.get("results", [])
     ]
