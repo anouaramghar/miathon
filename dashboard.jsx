@@ -128,9 +128,9 @@ function Dashboard({ scenario, onSeeReport, onSeeRadar, onRestart, onEditCriteri
           </div>
         </div>
         <div className="agent6-status">
-          <div><span className="agent6-dot"/>Agent 6 actif</div>
-          <div>Radar · MAJ il y a 7 min</div>
-          <div style={{ color: 'var(--ink-4)', fontSize: 9.5 }}>847 projets surveillés</div>
+          <div><span className="agent6-dot"/>Agent 6 · Radar</div>
+          <div>Veille presse nationale</div>
+          <div style={{ color: 'var(--ink-4)', fontSize: 9.5 }}>Tavily + IA · données réelles</div>
         </div>
       </div>
 

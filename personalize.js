@@ -22,33 +22,13 @@ const PROFILE_LABELS = {
 // ─── Scenario selector ────────────────────────────────────────────────────────
 
 function selectScenarioKey(form) {
-  const { profile, city, budget } = form;
-
-  if (profile === 'institution') {
-    return city === 'Casablanca-Settat' ? 'cri_casa' : 'cri';
+  // Institutions branch to the macro/CRI view; every individual analysis
+  // hydrates on the single validated real-data base (hassan · MRE Berkane).
+  // The backend fills the real numbers on top via the SSE 'complete' event.
+  if (form.profile === 'institution') {
+    return form.city === 'Casablanca-Settat' ? 'cri_casa' : 'cri';
   }
-  if (profile === 'mre') {
-    return city === 'Tanger' ? 'samira' : 'hassan';
-  }
-  if (profile === 'retraite') {
-    return 'brahim';
-  }
-  if (profile === 'fonctionnaire') {
-    if (city === 'Tanger') return 'samira';
-    if (city === 'Rabat')  return 'leila';
-    if (city === 'Agadir') return 'brahim';
-    return 'omar';
-  }
-  if (profile === 'diplome' || profile === 'femme') {
-    return city === 'Rabat' ? 'leila' : 'fatima';
-  }
-  // 'autre' — route by city then budget
-  if (city === 'Casablanca') return 'omar';
-  if (city === 'Tanger')     return 'samira';
-  if (city === 'Agadir')     return 'brahim';
-  if (city === 'Rabat')      return 'leila';
-  if (budget === 'gt500' || budget === '150-500') return 'hassan';
-  return 'fatima';
+  return 'hassan';
 }
 
 // ─── Core personalization engine ──────────────────────────────────────────────
@@ -295,7 +275,7 @@ function buildLoadingAgents(scenario) {
       task: `Scraping CRI · AMDIE · presse économique · région de ${city}…`,
       done: radarBoost
         ? `${radarBoost.shortName} détecté · ${radarBoost.amount} · ${radarBoost.jobs}`
-        : `847 projets indexés · aucun projet Radar direct dans ta zone`,
+        : `Veille presse nationale · aucun projet Radar direct dans ta zone`,
     },
     {
       id: 7, name: 'Project Analyzer (LLM)',

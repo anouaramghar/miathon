@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# Env / secrets
+.env
+*.env
+
+# Logs / temp
+*.log
+pipeline_out.txt
+
+# Node
+node_modules/
+
+# OS / editor
+.DS_Store
+Thumbs.db

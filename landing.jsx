@@ -28,7 +28,7 @@ function Landing({ onCTA, onQuickDemo }) {
             </button>
             <div className="meta">
               <span>3 questions · <b>~60 secondes</b></span>
-              <span>7 agents · <b>~8s d'analyse</b></span>
+              <span>5 agents IA · <b>données réelles</b></span>
             </div>
           </div>
         </div>
@@ -53,8 +53,8 @@ function Landing({ onCTA, onQuickDemo }) {
             <div className="l">Score moyen calibré sur<br/>les vrais cas similaires</div>
           </div>
           <div className="ps">
-            <div className="v">847</div>
-            <div className="l">Projets nationaux suivis<br/>par notre Radar</div>
+            <div className="v">12</div>
+            <div className="l">Régions du Maroc scannées<br/>par le Radar national</div>
           </div>
           <div className="ps">
             <div className="v">0</div>
@@ -73,7 +73,7 @@ function Landing({ onCTA, onQuickDemo }) {
           <LandingMacroMap/>
 
           <div className="layer-foot">
-            <div className="layer-num">847<span className="unit">projets surveillés</span></div>
+            <div className="layer-num">24/7<span className="unit">veille presse nationale</span></div>
             <div className="layer-desc">
               Surveillance continue des grands projets par IA.
               Extraction et structuration automatique.
@@ -83,7 +83,7 @@ function Landing({ onCTA, onQuickDemo }) {
 
         <div className="connector">
           <div className="connector-beam"/>
-          <div className="connector-label">↕ connexion temps réel</div>
+          <div className="connector-label">↕ connexion macro ↔ micro</div>
         </div>
 
         <div className="layer">

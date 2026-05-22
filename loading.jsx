@@ -9,7 +9,7 @@ const FALLBACK_AGENTS = {
     { id: 4, name: 'Administrative Navigator', task: 'Démarches légales spécifiques au profil…', done: 'Démarches identifiées et séquencées' },
   ],
   radar: [
-    { id: 6, name: 'Data Collector', task: 'Scraping CRI · AMDIE · presse économique (24h)…', done: '847 projets indexés · région analysée' },
+    { id: 6, name: 'Data Collector', task: 'Veille presse nationale (Tavily) · grands projets…', done: 'Projets nationaux détectés · région analysée' },
     { id: 7, name: 'Project Analyzer (LLM)', task: 'Extraction structurée — secteur, montant, région…', done: 'Projets classés par impact local' },
   ],
   bridge: {
@@ -175,7 +175,7 @@ function LoadingScreen({ onDone, duration = 8000, scenario, jobId, onResult }) {
     <div className="loading">
       {/* H2 — user-friendly copy, no tech jargon */}
       <div className="eyebrow" style={{ marginBottom: 8 }}>
-        Analyse personnalisée · 5 sources · données temps réel
+        Analyse personnalisée · OpenStreetMap + presse nationale · données réelles
       </div>
       <h2>
         Analyse en cours{profLbl ? ` · profil ${profLbl}` : ''} —{' '}

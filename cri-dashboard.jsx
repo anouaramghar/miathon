@@ -108,7 +108,7 @@ function ProjectDetailPanel({ project, onClose, onViewInvest }) {
         <div className="proj-detail-section">
           <div className="dl">Mise à jour</div>
           <p style={{ fontFamily: 'var(--sans)', fontSize: 'var(--text-xs)', color: 'var(--ink-3)' }}>
-            Agent 6 · recherche presse en temps réel
+            Agent 6 · veille presse (Tavily + IA)
           </p>
         </div>
       </div>
@@ -206,24 +206,24 @@ function CRIDashboard({ scenario, onRestart, onViewInvest }) {
       {/* Summary stats */}
       <div className="cri-summary">
         <div className="cri-stat">
-          <div className="l">Projets surveillés</div>
-          <div className="v">{filtered.length}<span className="unit">{sectorFilter === 'all' ? '/ 847 national' : `/ ${allProjects.length}`}</span></div>
-          <div className="trend">↑ +12 nouveaux ce mois</div>
+          <div className="l">Projets détectés</div>
+          <div className="v">{filtered.length}<span className="unit">/ {allProjects.length}</span></div>
+          <div className="trend">presse nationale · {updatedLabel}</div>
         </div>
         <div className="cri-stat">
           <div className="l">Montant engagé</div>
           <div className="v">{(totalAmount/1000).toFixed(1)}<span className="unit">Mds DH</span></div>
-          <div className="trend">↑ +8,4% vs Q4 2025</div>
+          <div className="trend" style={{ color: 'var(--ink-3)' }}>montants déclarés</div>
         </div>
         <div className="cri-stat">
           <div className="l">Emplois projetés</div>
           <div className="v">{(totalJobs/1000).toFixed(0)}<span className="unit">K</span></div>
-          <div className="trend" style={{ color: 'var(--ink-3)' }}>directs · 5 ans</div>
+          <div className="trend" style={{ color: 'var(--ink-3)' }}>directs · déclarés</div>
         </div>
         <div className="cri-stat">
           <div className="l">Phase "en cours"</div>
           <div className="v">{filtered.filter(p => p.phase === 'en_cours').length}<span className="unit">/ {filtered.length}</span></div>
-          <div className="trend" style={{ color: 'var(--terra)' }}>● temps réel</div>
+          <div className="trend" style={{ color: 'var(--ink-3)' }}>vs planifiés</div>
         </div>
       </div>
 
@@ -327,7 +327,7 @@ function CRIDashboard({ scenario, onRestart, onViewInvest }) {
       }}>
         <span>
           <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: 'var(--good)', marginRight: 8, verticalAlign: 1 }}/>
-          Agent 6 actif · surveillance en temps réel
+          Agent 6 · veille presse nationale (Tavily + IA)
         </span>
         <span>{allProjects.length} projets réels · sources presse · {updatedLabel}</span>
       </div>

@@ -319,8 +319,8 @@ function ResultsScreen({ scenario, onRestart, onEditCriteria }) {
             </div>
             <h3>Un <em>grand projet</em> arrive près de toi.<br/>Voici ce que ça change.</h3>
             <p className="lede">
-              Notre Radar surveille 847 projets d'investissement annoncés au Maroc.
-              Quand un projet majeur est détecté dans ta région, Agent 5 réévalue le score de business
+              Notre Radar suit les grands projets d'investissement annoncés dans la presse nationale.
+              Quand un projet majeur est détecté près de ta zone, Agent 5 réévalue le score du business
               dont la demande sera directement boostée par cet afflux d'activité.
             </p>
           </div>
@@ -336,7 +336,7 @@ function ResultsScreen({ scenario, onRestart, onEditCriteria }) {
                 <div className="stat-item">Progression<b>{scenario.radarBoost.progress}%</b></div>
               </div>
               <div className="source-link">
-                Détecté et vérifié en temps réel par Agent 6 le {scenario.radarBoost.detectedAt}
+                Identifié par le Radar national · Agent 6 · source : {scenario.radarBoost.source}
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
@@ -392,7 +392,7 @@ function ResultsScreen({ scenario, onRestart, onEditCriteria }) {
       {/* Footer */}
       <div className="section-bridge" style={{ marginTop: 48 }}>
         <div className="line"/>
-        <div className="label">Analyse IA structurée · Données qualifiées en temps réel</div>
+        <div className="label">Analyse IA structurée · OpenStreetMap + presse nationale</div>
         <div className="line"/>
       </div>
 

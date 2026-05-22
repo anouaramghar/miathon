@@ -163,14 +163,14 @@ function Questionnaire({ form, setForm, onSubmit, onQuickFill, onBack }) {
               <div className="profile-hint">
                 <div className="profile-hint-row">
                   <span className="profile-hint-label">Budget typique</span>
-                  <span className="profile-hint-val">{profileHint.budgetRange}</span>
+                  <span className="profile-hint-val">{profileHint.budget}</span>
                 </div>
                 <div className="profile-hint-row">
                   <span className="profile-hint-label">Secteurs clés</span>
                   <span className="profile-hint-val">{profileHint.businesses.join(' · ')}</span>
                 </div>
-                {profileHint.financing && (
-                  <div className="profile-hint-note">{profileHint.financing}</div>
+                {profileHint.note && (
+                  <div className="profile-hint-note">{profileHint.note}</div>
                 )}
               </div>
             )}
@@ -257,7 +257,7 @@ function Questionnaire({ form, setForm, onSubmit, onQuickFill, onBack }) {
             <h3>Pas de question budget.</h3>
             <p className="sub" style={{ marginTop: -4 }}>
               Ton dashboard sera adapté au suivi macro : carte nationale, filtres par secteur,
-              feed Radar en temps réel. Aucune question supplémentaire.
+              Radar des grands projets (presse nationale). Aucune question supplémentaire.
             </p>
           </div>
         )}

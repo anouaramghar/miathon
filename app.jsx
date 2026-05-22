@@ -146,11 +146,10 @@ function App() {
   };
 
   // CRI → Invest: navigate directly to the investor scenario for a given project
-  const handleCRIViewInvest = (projectId) => {
-    const key  = (window.PROJECT_TO_SCENARIO || {})[projectId] || 'hassan';
-    const base = window.SCENARIOS[key];
-    setScenarioKey(key);
-    setScenario(base);
+  const handleCRIViewInvest = () => {
+    // The single validated invest demo (real-data base).
+    setScenarioKey('hassan');
+    setScenario(window.SCENARIOS.hassan);
     setPhase('dashboard');
   };
 
@@ -165,7 +164,7 @@ function App() {
           {(phase === 'dashboard' || phase === 'results' || phase === 'cri') && (
               <span className="trust-strip">
                 <span className="trust-dot"/>
-                Analyse IA en temps réel · MAJ il y a 7 min
+                Analyse IA · données réelles
               </span>
           )}
           {(phase === 'dashboard' || phase === 'results' || phase === 'cri') && (
@@ -187,7 +186,7 @@ function App() {
             </div>
           )}
           {/* H2 — user-friendly tag, no tech jargon */}
-          <span className="pill"><span className="dot"/> IA · données temps réel</span>
+          <span className="pill"><span className="dot"/> IA · données réelles</span>
           <span>v3.0 · Miathon 2026</span>
           <span>ENIAD · UMP</span>
         </div>
