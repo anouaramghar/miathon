@@ -92,10 +92,21 @@ function ProjectDetailPanel({ project, onClose, onViewInvest }) {
             <p>{project.launch}</p>
           </div>
         )}
+        {project.source && (
+          <div className="proj-detail-section">
+            <div className="dl">Source</div>
+            <p style={{ fontSize: 'var(--text-xs)', wordBreak: 'break-all' }}>
+              <a href={project.source} target="_blank" rel="noopener noreferrer"
+                style={{ color: 'var(--terra)' }}>
+                {(() => { try { return new URL(project.source).hostname; } catch (e) { return project.source; } })()} ↗
+              </a>
+            </p>
+          </div>
+        )}
         <div className="proj-detail-section">
           <div className="dl">Mise à jour</div>
           <p style={{ fontFamily: 'var(--sans)', fontSize: 'var(--text-xs)', color: 'var(--ink-3)' }}>
-            Agent 6 · Surveillance continue · MAJ il y a 7 min
+            Agent 6 · recherche presse en temps réel
           </p>
         </div>
       </div>
@@ -106,8 +117,43 @@ function ProjectDetailPanel({ project, onClose, onViewInvest }) {
 function CRIDashboard({ scenario, onRestart, onViewInvest }) {
   const [sectorFilter, setSectorFilter] = React.useState('all');
   const [selectedProject, setSelectedProject] = React.useState(null);
+  const [allProjects, setAllProjects] = React.useState(null); // null = still loading
+  const [genAt, setGenAt] = React.useState(null);
 
-  const allProjects    = window.NATIONAL_PROJECTS;
+  // Fetch the REAL national projects (Tavily + LLM + geocoding, cached server-side).
+  // Last-resort fallback to the bundled set only if the backend is unreachable.
+  React.useEffect(() => {
+    let cancelled = false;
+    fetch('http://localhost:8000/api/projects')
+      .then(r => r.json())
+      .then(d => {
+        if (cancelled) return;
+        const ps = (d.projects && d.projects.length) ? d.projects : (window.NATIONAL_PROJECTS || []);
+        setAllProjects(ps);
+        setGenAt(d.generated_at || null);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        console.warn('[InvestMap] /api/projects unreachable — using bundled fallback');
+        setAllProjects(window.NATIONAL_PROJECTS || []);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  if (allProjects === null) {
+    return (
+      <div className="cri-dash">
+        <div style={{ padding: 60, textAlign: 'center', color: 'var(--ink-3)' }}>
+          <span className="spinner" style={{ marginRight: 10 }} />
+          Radar national · chargement des projets réels…
+        </div>
+      </div>
+    );
+  }
+
+  const updatedLabel = genAt
+    ? `MAJ ${new Date(genAt * 1000).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}`
+    : 'données réelles';
   const regionProjects = allProjects.filter(p => p.region === scenario.user.region);
   const filtered       = sectorFilter === 'all' ? allProjects : allProjects.filter(p => p.sector === sectorFilter);
 
@@ -136,7 +182,7 @@ function CRIDashboard({ scenario, onRestart, onViewInvest }) {
             <em>{scenario.user.org}</em> · {regionProjects.length} projets dans la région
           </h2>
           <div style={{ fontFamily: 'var(--sans)', fontSize: 'var(--text-xs)', color: 'var(--ink-3)', marginTop: 4 }}>
-            {scenario.user.contact} · dashboard mis à jour il y a 7 min
+            {scenario.user.contact} · {updatedLabel}
           </div>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -278,7 +324,7 @@ function CRIDashboard({ scenario, onRestart, onViewInvest }) {
           <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: 'var(--good)', marginRight: 8, verticalAlign: 1 }}/>
           Agent 6 actif · surveillance en temps réel
         </span>
-        <span>847 projets · 12 régions · MAJ il y a 7 min</span>
+        <span>{allProjects.length} projets réels · sources presse · {updatedLabel}</span>
       </div>
 
       {/* Slide-in project detail panel */}

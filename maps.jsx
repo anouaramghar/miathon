@@ -289,9 +289,9 @@ function MoroccoMapLeaflet({ projects, sectorFilter, onProjectClick, highlight }
     map.fitBounds([[21.5, -17.5], [36.0, -0.5]]);
 
     projects.forEach(p => {
-      const coords = PROJECT_LATLNG[p.id];
+      const coords = (p.lat != null && p.lng != null) ? [p.lat, p.lng] : PROJECT_LATLNG[p.id];
       if (!coords) return;
-      const sector = window.SECTORS[p.sector];
+      const sector = window.SECTORS[p.sector] || window.SECTORS.infrastructure;
       const size   = p.featured ? 18 : 12;
 
       const html = `<div class="lf-proj-dot${p.featured ? ' featured' : ''}" style="width:${size}px;height:${size}px;background:${sector.color};box-shadow:0 0 0 ${p.featured ? 4 : 2}px ${sector.color}40"></div>`;
