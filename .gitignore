@@ -19,3 +19,8 @@ node_modules/
 # OS / editor
 .DS_Store
 Thumbs.db
+
+# Docs / PRD artifacts (kept locally, not tracked)
+*.pdf
+docs/
+_prd.txt
