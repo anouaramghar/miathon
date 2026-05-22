@@ -7,10 +7,12 @@ function ProjectDetailPanel({ project, onClose, onViewInvest }) {
     <div className="proj-detail-panel closed" aria-hidden="true"/>
   );
 
-  const sector = window.SECTORS[project.sector];
-  const amtLabel = project.amount >= 1000
-    ? `${(project.amount / 1000).toFixed(1)} Mds DH`
-    : `${project.amount} M DH`;
+  const sector = window.SECTORS[project.sector] || window.SECTORS.infrastructure;
+  const amtLabel = !project.amount
+    ? 'n.c.'
+    : project.amount >= 1000
+      ? `${(project.amount / 1000).toFixed(1)} Mds DH`
+      : `${project.amount} M DH`;
 
   return (
     <div className="proj-detail-panel" role="complementary" aria-label="Détail projet">
@@ -160,6 +162,11 @@ function CRIDashboard({ scenario, onRestart, onViewInvest }) {
   const totalAmount = filtered.reduce((s, p) => s + p.amount, 0);
   const totalJobs   = filtered.reduce((s, p) => s + (p.jobs || 0), 0);
 
+  const amtCell = (a) =>
+    a >= 1000 ? <>{(a / 1000).toFixed(1)}<span className="unit">Mds DH</span></>
+    : a > 0   ? <>{a}<span className="unit">M DH</span></>
+    :           <span className="unit">n.c.</span>;
+
   const handleProjectClick = (p) => setSelectedProject(p);
   const handleCloseDetail  = () => setSelectedProject(null);
 
@@ -276,8 +283,7 @@ function CRIDashboard({ scenario, onRestart, onViewInvest }) {
                   <div className="progress-bar"><div style={{ width: `${p.progress}%` }}/></div>
                 </div>
                 <div className="proj-amount">
-                  {p.amount >= 1000 ? `${(p.amount/1000).toFixed(1)}` : p.amount}
-                  <span className="unit">{p.amount >= 1000 ? 'Mds DH' : 'M DH'}</span>
+                  {amtCell(p.amount)}
                 </div>
               </div>
             ))}
@@ -304,8 +310,7 @@ function CRIDashboard({ scenario, onRestart, onViewInvest }) {
                   </span>
                 </div>
                 <div className="proj-amount">
-                  {p.amount >= 1000 ? `${(p.amount/1000).toFixed(1)}` : p.amount}
-                  <span className="unit">{p.amount >= 1000 ? 'Mds DH' : 'M DH'}</span>
+                  {amtCell(p.amount)}
                 </div>
               </div>
             ))}

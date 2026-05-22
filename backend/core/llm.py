@@ -38,7 +38,7 @@ async def chat(
     headers = {**extra, "Authorization": f"Bearer {key}", "Content-Type": "application/json"}
     payload = {"model": model, "messages": messages, "temperature": temperature, "max_tokens": max_tokens}
     for attempt in range(_retries + 1):
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        async with httpx.AsyncClient(timeout=180.0) as client:
             r = await client.post(url, headers=headers, json=payload)
             if r.status_code == 429 and attempt < _retries:
                 wait = 5 * (attempt + 1)

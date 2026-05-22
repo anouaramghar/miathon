@@ -1,14 +1,18 @@
 from agents.base import BaseAgent
 from core.tavily import search
 
-# Thematic queries covering the main investment sectors nationwide. Kept small
-# to stay within the Tavily free tier while giving broad national coverage.
+# Thematic + regional queries for broad national coverage. Regional queries
+# ensure each of the 12 regions surfaces projects (not just the big national ones).
 _QUERIES = [
     "grands projets investissement Maroc milliards dirhams 2025 2026",
     "nouveaux projets industriels usine Maroc investissement 2026",
-    "projets énergie renouvelable solaire éolien hydrogène Maroc 2026",
+    "projets énergie renouvelable solaire éolien hydrogène vert Maroc 2026",
     "projets infrastructure port autoroute TGV aéroport Maroc 2026",
-    "projets touristiques immobiliers zones industrielles Maroc 2026",
+    "projets touristiques hôtels resorts Maroc investissement 2026",
+    "projets investissement région Oriental Oujda Nador Berkane 2026",
+    "projets investissement Casablanca Rabat Tanger 2026 milliards",
+    "projets investissement Marrakech Agadir Fès Souss 2026",
+    "zones industrielles parcs MEDZ AMDIE Maroc nouveaux projets 2026",
 ]
 
 

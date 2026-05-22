@@ -297,7 +297,7 @@ function MoroccoMapLeaflet({ projects, sectorFilter, onProjectClick, highlight }
       const html = `<div class="lf-proj-dot${p.featured ? ' featured' : ''}" style="width:${size}px;height:${size}px;background:${sector.color};box-shadow:0 0 0 ${p.featured ? 4 : 2}px ${sector.color}40"></div>`;
       const icon = L.divIcon({ className: '', html, iconSize: [size, size], iconAnchor: [size / 2, size / 2] });
 
-      const amt = p.amount >= 1000 ? `${(p.amount / 1000).toFixed(1)} Mds DH` : `${p.amount} M DH`;
+      const amt = !p.amount ? 'Montant n.c.' : p.amount >= 1000 ? `${(p.amount / 1000).toFixed(1)} Mds DH` : `${p.amount} M DH`;
       const phaseHtml = p.phase === 'en_cours'
         ? `<span class="lf-phase en-cours">En cours · ${p.progress}%</span>`
         : `<span class="lf-phase planifie">Planifié · ${p.launch}</span>`;

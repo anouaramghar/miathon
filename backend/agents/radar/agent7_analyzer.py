@@ -58,13 +58,14 @@ Réponds avec ce JSON exact :
 }}
 
 Règles :
-- "amount" en MILLIONS de dirhams (ex: 10 milliards DH = 10000).
-- "sector" et "region" DOIVENT être exactement une des valeurs listées.
+- "amount" en MILLIONS de dirhams (ex: 10 milliards DH = 10000). Mets 0 si non précisé.
+- "sector" et "region" DOIVENT être exactement une des valeurs listées (déduis la région depuis la ville/le lieu mentionné).
 - "progress" : pourcentage d'avancement 0-100 si connu, sinon 0.
 - "jobs" : nombre d'emplois si mentionné, sinon null.
 - "source_url" : OBLIGATOIRE, l'URL exacte de l'article source.
-- Ignore les projets sans montant ni porteur identifiable.
-- Maximum 20 projets, priorise les plus importants par montant."""
+- Extrais TOUS les projets distincts mentionnés (industrie, énergie, infrastructure,
+  tourisme, immobilier, agriculture, tech), même si le montant n'est pas précisé.
+- Vise 12 à 20 projets distincts si l'information le permet. Ne duplique pas un même projet."""
 
 
 class Agent7Analyzer(BaseAgent):
@@ -80,7 +81,7 @@ class Agent7Analyzer(BaseAgent):
 
         blob = "\n\n".join(
             f"[{i+1}] {a['title']}\nURL: {a['url']}\n{a['content']}"
-            for i, a in enumerate(articles[:25])
+            for i, a in enumerate(articles[:40])
         )
         prompt = _PROMPT.format(
             articles=blob,
@@ -92,7 +93,7 @@ class Agent7Analyzer(BaseAgent):
             result = await chat_json(
                 [{"role": "system", "content": _SYSTEM},
                  {"role": "user", "content": prompt}],
-                max_tokens=4096,
+                max_tokens=6000,
             )
         except Exception as e:
             print(f"[Agent7] LLM extraction failed: {e}")
