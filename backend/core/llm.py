@@ -54,6 +54,13 @@ async def chat_json(messages: list[dict], **kwargs) -> dict:
     """Like chat() but parses JSON, stripping ```json fences if present."""
     text = (await chat(messages, **kwargs)).strip()
     if text.startswith("```"):
-        text = text.split("\n", 1)[1]
+        text = text.split("\n", 1)[1] if "\n" in text else text[3:]
         text = text.rsplit("```", 1)[0]
-    return json.loads(text.strip())
+    text = text.strip()
+    # Tolerate prose around the JSON object/array (common with chat models).
+    if text and text[0] not in "{[":
+        starts = [i for i in (text.find("{"), text.find("[")) if i != -1]
+        ends = [i for i in (text.rfind("}"), text.rfind("]")) if i != -1]
+        if starts and ends:
+            text = text[min(starts):max(ends) + 1]
+    return json.loads(text)

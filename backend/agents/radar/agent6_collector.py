@@ -1,4 +1,3 @@
-from agents.base import BaseAgent
 from core.tavily import search
 
 # Multi-language, multi-topic queries for broad national coverage:
@@ -26,11 +25,8 @@ _QUERIES = [
 ]
 
 
-class Agent6Collector(BaseAgent):
-    label = "Vérification des grands projets nationaux..."
-
-    async def _run_mock(self, context: dict) -> dict:
-        return {"collected": 0}
+class Agent6Collector:
+    """Collects recent Moroccan investment-project news via Tavily search."""
 
     async def collect(self) -> list[dict]:
         """Run all queries and return a deduplicated list of articles."""

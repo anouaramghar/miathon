@@ -1,6 +1,5 @@
 import asyncio
 import httpx
-from agents.base import BaseAgent
 from core.llm import chat_json
 
 # The 7 sector keys and 12 regions the frontend knows how to render. The LLM is
@@ -99,11 +98,8 @@ Règles :
   n'est pas précisé. N'INVENTE RIEN et ne force aucun nombre — uniquement ce qui est cité."""
 
 
-class Agent7Analyzer(BaseAgent):
-    label = "Extraction structurée des projets..."
-
-    async def _run_mock(self, context: dict) -> dict:
-        return {"analyzed": 0}
+class Agent7Analyzer:
+    """LLM-extracts structured projects from articles, then geocodes them."""
 
     BATCH_SIZE = 12
 
@@ -201,9 +197,12 @@ class Agent7Analyzer(BaseAgent):
                         data = r.json()
                         if data:
                             lat, lng = float(data[0]["lat"]), float(data[0]["lon"])
-                        await asyncio.sleep(1.1)  # respect Nominatim usage policy
                     except Exception:
                         pass
+                    await asyncio.sleep(1.1)  # respect Nominatim usage policy (always)
                 if lat is None:
                     lat, lng = REGION_CENTROIDS.get(p["region"], [31.79, -7.09])
+                    p["geo"] = "region"   # approximate — region centroid
+                else:
+                    p["geo"] = "city"     # precise — geocoded city
                 p["lat"], p["lng"] = lat, lng

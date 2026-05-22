@@ -6,6 +6,7 @@ from agents.invest.agent2_demand import Agent2Demand
 from agents.invest.agent3_matching import Agent3Matching
 from agents.invest.agent4_admin import Agent4Admin
 from agents.invest.agent5_predictor import Agent5Predictor
+from agents.radar.national_radar import nearest_project
 
 INVEST_AGENTS = [
     Agent1Location(),
@@ -58,6 +59,14 @@ async def run_invest_pipeline(job_id: str, form: dict):
             await queue.put({"type": "agent_start", "agent": i, "label": agent.label})
             result = await agent.run(context)
             context.update(result)
+            # After Agent 1 (location), find the real nearest national Radar
+            # project so Agent 5 can factor it into the score (micro↔macro link).
+            if i == 1:
+                coords = (result.get("location") or {}).get("coordinates") or {}
+                if coords.get("lat") is not None:
+                    near = nearest_project(coords["lat"], coords["lng"])
+                    if near:
+                        context["radar_nearby"] = near
             await queue.put({"type": "agent_done", "agent": i, "data": result})
 
         await queue.put({"type": "complete", "scenario": assemble_scenario(context)})
@@ -75,7 +84,7 @@ async def stream_job(job_id: str):
     queue = _jobs[job_id]
     try:
         while True:
-            event = await asyncio.wait_for(queue.get(), timeout=120.0)
+            event = await asyncio.wait_for(queue.get(), timeout=240.0)
             if event is None:
                 break
             yield f"event: {event['type']}\ndata: {json.dumps(event)}\n\n"

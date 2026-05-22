@@ -20,8 +20,12 @@ Recommandation principale : {business} (score initial {score}/100)
 Manques commerciaux terrain : {gaps}
 Concurrents existants : {competitors}
 Signal de demande : {demand_signal}
+Grand projet national à proximité (Radar) : {radar_nearby}
 
 Calcule le score final de succès et génère l'analyse détaillée.
+Si un grand projet national est proche (< 80 km), ajoute UN point fort "Radar" qui
+explique l'impact attendu (flux démographique, emplois, demande induite) et reflète-le
+dans le score. S'il n'y en a pas, n'invente aucun bonus Radar.
 
 Réponds avec ce JSON exact :
 {{
@@ -94,6 +98,11 @@ class Agent5Predictor(BaseAgent):
         top      = matches[0] if matches else {"business": "commerce", "score": 60}
 
         budget_id = context.get("budget", "30-150")
+        near = context.get("radar_nearby")
+        radar_txt = (
+            f"{near['name']} ({near.get('sector','')}, ~{near['distance_km']} km"
+            + (f", {near['amount']} M DH" if near.get('amount') else "") + ")"
+        ) if near else "aucun à proximité"
         prompt = _PROMPT.format(
             profile=context.get("profile", "mre"),
             city=context.get("city", "Berkane"),
@@ -105,6 +114,7 @@ class Agent5Predictor(BaseAgent):
                 f"{c['type']} ({c['count']})" for c in location.get("competitors", [])
             ) or "aucun",
             demand_signal=demand.get("demand_signal", "modérée"),
+            radar_nearby=radar_txt,
         )
 
         try:
@@ -115,6 +125,6 @@ class Agent5Predictor(BaseAgent):
             if "scores" in result:
                 return {"scores": result["scores"]}
         except Exception as e:
-            print(f"[Agent5] OpenRouter failed ({e}), falling back to mock")
+            print(f"[Agent5] LLM failed ({e}), falling back to mock")
 
         return await self._run_mock(context)

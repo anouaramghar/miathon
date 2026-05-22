@@ -72,6 +72,6 @@ class Agent4Admin(BaseAgent):
             if "admin_steps" in result:
                 return {"admin_steps": result["admin_steps"]}
         except Exception as e:
-            print(f"[Agent4] OpenRouter failed ({e}), falling back to mock")
+            print(f"[Agent4] LLM failed ({e}), falling back to mock")
 
         return await self._run_mock(context)

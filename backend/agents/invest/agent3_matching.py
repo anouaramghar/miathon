@@ -87,6 +87,6 @@ class Agent3Matching(BaseAgent):
             if "matches" in result:
                 return {"matches": result["matches"]}
         except Exception as e:
-            print(f"[Agent3] OpenRouter failed ({e}), falling back to mock")
+            print(f"[Agent3] LLM failed ({e}), falling back to mock")
 
         return await self._run_mock(context)
