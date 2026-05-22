@@ -5,9 +5,17 @@ _SYSTEM = """Tu es un analyste financier et expert en investissement au Maroc.
 Tu réponds UNIQUEMENT en JSON valide, sans texte avant ou après.
 Tous les textes sont en français."""
 
+_BUDGET_LABELS = {
+    "lt30":    "moins de 30 000 DH",
+    "30-150":  "entre 30 000 et 150 000 DH",
+    "150-500": "entre 150 000 et 500 000 DH",
+    "gt500":   "plus de 500 000 DH",
+    "none":    "non précisé",
+}
+
 _PROMPT = """Analyse complète de l'opportunité d'investissement :
 
-Investisseur : profil {profile}, ville {city}, budget {budget} DH
+Investisseur : profil {profile}, ville {city}, budget {budget}
 Recommandation principale : {business} (score initial {score}/100)
 Manques commerciaux terrain : {gaps}
 Concurrents existants : {competitors}
@@ -42,6 +50,10 @@ Réponds avec ce JSON exact :
 }}
 
 Adapte les montants financiers au budget de l'investisseur et au marché marocain réaliste.
+IMPORTANT : "investment" et "monthlyNet" sont en DIRHAMS (DH), valeurs réalistes pour le
+Maroc — typiquement entre 30 000 et 1 000 000 DH pour l'investissement, et entre 5 000 et
+80 000 DH pour le revenu mensuel net. N'utilise JAMAIS de montants inférieurs à 1 000.
+"roiMonths" est un nombre de mois (entre 6 et 36).
 Score de 0 à 100 basé sur les données terrain réelles."""
 
 
@@ -76,17 +88,16 @@ class Agent5Predictor(BaseAgent):
         }
 
     async def _run_live(self, context: dict) -> dict:
-        import asyncio
-        await asyncio.sleep(10)  # space out requests to stay under free-tier rate limit
         location = context.get("location", {})
         demand   = context.get("demand", {})
         matches  = context.get("matches", [])
         top      = matches[0] if matches else {"business": "commerce", "score": 60}
 
+        budget_id = context.get("budget", "30-150")
         prompt = _PROMPT.format(
             profile=context.get("profile", "mre"),
             city=context.get("city", "Berkane"),
-            budget=context.get("budget", "30-150"),
+            budget=_BUDGET_LABELS.get(budget_id, budget_id),
             business=top["business"],
             score=top.get("score", 60),
             gaps=", ".join(location.get("commercial_gaps", [])) or "aucun",

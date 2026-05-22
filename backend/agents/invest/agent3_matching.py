@@ -6,10 +6,18 @@ _SYSTEM = """Tu es un expert en analyse de marché et investissement au Maroc.
 Tu réponds UNIQUEMENT en JSON valide, sans texte avant ou après.
 Tous les textes dans ta réponse sont en français."""
 
+_BUDGET_LABELS = {
+    "lt30":    "moins de 30 000 DH",
+    "30-150":  "entre 30 000 et 150 000 DH",
+    "150-500": "entre 150 000 et 500 000 DH",
+    "gt500":   "plus de 500 000 DH",
+    "none":    "non précisé",
+}
+
 _PROMPT = """Contexte investisseur :
 - Profil : {profile}
 - Ville : {city}, quartier : {neighborhood}
-- Budget : {budget} DH
+- Budget : {budget}
 
 Données terrain (OpenStreetMap) :
 - Manques commerciaux détectés : {gaps}
@@ -62,7 +70,7 @@ class Agent3Matching(BaseAgent):
             profile=context.get("profile", "mre"),
             city=context.get("city", "Berkane"),
             neighborhood=context.get("neighborhood", ""),
-            budget=context.get("budget", "30-150"),
+            budget=_BUDGET_LABELS.get(context.get("budget", "30-150"), context.get("budget", "30-150")),
             gaps=", ".join(location.get("commercial_gaps", [])) or "aucun",
             competitors=", ".join(
                 f"{c['type']} ({c['count']})" for c in location.get("competitors", [])

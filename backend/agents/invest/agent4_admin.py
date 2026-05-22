@@ -55,8 +55,6 @@ class Agent4Admin(BaseAgent):
         return {"admin_steps": steps_by_profile.get(profile, steps_by_profile["mre"])}
 
     async def _run_live(self, context: dict) -> dict:
-        import asyncio
-        await asyncio.sleep(10)  # space out requests to stay under free-tier rate limit
         matches = context.get("matches", [])
         top_business = matches[0]["business"] if matches else "commerce général"
 
