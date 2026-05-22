@@ -1,7 +1,7 @@
 import asyncio
 import httpx
 from agents.base import BaseAgent
-from core.openrouter import chat_json
+from core.llm import chat_json
 
 # The 7 sector keys and 12 regions the frontend knows how to render. The LLM is
 # constrained to these so colors, filters, and the map keep working.

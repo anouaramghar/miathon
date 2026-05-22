@@ -1,5 +1,5 @@
 from agents.base import BaseAgent
-from core.openrouter import chat_json
+from core.llm import chat_json
 
 _SYSTEM = """Tu es un analyste financier et expert en investissement au Maroc.
 Tu réponds UNIQUEMENT en JSON valide, sans texte avant ou après.
