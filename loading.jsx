@@ -19,6 +19,40 @@ const FALLBACK_AGENTS = {
   },
 };
 
+// Build a human-readable "done" line from a REAL agent_done SSE payload.
+// Returns null when the data shape is unexpected (caller keeps the static text).
+function realFinding(agent, data) {
+  try {
+    if (!data) return null;
+    if (agent === 1) {
+      const loc = data.location || {};
+      const comps = loc.competitors || [];
+      const total = comps.reduce((s, c) => s + (c.count || 0), 0);
+      const top2 = comps.slice(0, 2).map(c => `${c.type} ×${c.count}`).join(' · ');
+      const gaps = (loc.commercial_gaps || []).join(', ');
+      return `${top2 || 'zone scannée'} · ${total} établissements${gaps ? ' · manque : ' + gaps : ''}`;
+    }
+    if (agent === 2) {
+      const d = data.demand || {};
+      return `Signal de demande : ${d.demand_signal || '—'}${d.source ? ' · ' + d.source : ''}`;
+    }
+    if (agent === 3) {
+      const m = data.matches || [];
+      return m.slice(0, 3).map(x => `${x.business} ${x.score}`).join(' · ') || 'Opportunités classées';
+    }
+    if (agent === 4) {
+      const steps = data.admin_steps || [];
+      return steps.slice(0, 3).map(s => s.step).join(' → ') || 'Démarches séquencées';
+    }
+    if (agent === 5) {
+      const top = (data.scores || {}).top_recommendation || {};
+      return [top.business, top.score != null ? top.score + '/100' : null, top.verdict]
+        .filter(Boolean).join(' · ') || 'Score calculé';
+    }
+  } catch (e) { /* fall through */ }
+  return null;
+}
+
 function LoadingScreen({ onDone, duration = 8000, scenario, jobId, onResult }) {
   // Build context-aware agent messages from scenario (via personalize.js)
   const agents = React.useMemo(() => {
@@ -36,12 +70,17 @@ function LoadingScreen({ onDone, duration = 8000, scenario, jobId, onResult }) {
   const RADAR_AGENTS = agents.radar;
   const BRIDGE = agents.bridge;
 
-  const [investDone, setInvestDone] = React.useState(0);
-  const [radarDone, setRadarDone]   = React.useState(0);
-  const [bridgeDone, setBridgeDone] = React.useState(false);
-  const [secs, setSecs]             = React.useState(0);
-  const [canSkip, setCanSkip]       = React.useState(false); // H3 — skip appears after 3s
+  const [investDone, setInvestDone]   = React.useState(0);
+  const [radarDone, setRadarDone]     = React.useState(0);
+  const [bridgeDone, setBridgeDone]   = React.useState(false);
+  const [secs, setSecs]               = React.useState(0);
+  const [canSkip, setCanSkip]         = React.useState(false); // H3 — skip appears after 3s
+  const [liveFindings, setFindings]   = React.useState({});    // real per-agent results, keyed by agent id
   const doneRef = React.useRef(false);
+
+  // Real mode = a live backend job is streaming. SSE drives the invest rail,
+  // the bridge, and the transition. Demo mode (no jobId) stays timer-driven.
+  const realMode = !!jobId;
 
   const skip = () => {
     if (doneRef.current) return;
@@ -60,9 +99,13 @@ function LoadingScreen({ onDone, duration = 8000, scenario, jobId, onResult }) {
     es.addEventListener('agent_done', e => {
       const d = JSON.parse(e.data);
       console.log('[InvestMap SSE] agent_done', d.agent);
+      const finding = realFinding(d.agent, d.data);
+      if (finding) setFindings(prev => ({ ...prev, [d.agent]: finding }));
+      if (d.agent >= 1 && d.agent <= 4) setInvestDone(v => Math.max(v, d.agent));
+      if (d.agent === 5) setBridgeDone(true);
     });
     es.addEventListener('complete', e => {
-      console.log('[InvestMap SSE] pipeline complete — agents ran successfully');
+      console.log('[InvestMap SSE] pipeline complete — real data ready');
       try {
         const real = JSON.parse(e.data).scenario;
         if (real && onResult) onResult(real);
@@ -70,33 +113,53 @@ function LoadingScreen({ onDone, duration = 8000, scenario, jobId, onResult }) {
         console.warn('[InvestMap SSE] could not parse complete payload', err);
       }
       es.close();
+      setInvestDone(INVEST_AGENTS.length);
+      setBridgeDone(true);
+      // Brief beat so the jury sees agent 5's real score land before we switch.
+      if (!doneRef.current) { doneRef.current = true; setTimeout(onDone, 1100); }
     });
     es.onerror = () => { console.warn('[InvestMap SSE] connection closed'); es.close(); };
     return () => es.close();
   }, [jobId]);
 
   React.useEffect(() => {
-    const iStep = (duration * 0.58) / INVEST_AGENTS.length;
-    const rStep = (duration * 0.55) / RADAR_AGENTS.length;
+    const tick  = setInterval(() => setSecs(s => +(s + 0.1).toFixed(1)), 100);
+    const skip3 = setTimeout(() => setCanSkip(true), 3000); // H3 — show skip after 3s
 
-    const its = INVEST_AGENTS.map((_, i) =>
-      setTimeout(() => setInvestDone(v => Math.max(v, i + 1)), iStep * (i + 1))
-    );
+    // Radar layer has no live backend → always timer-driven. In real mode,
+    // stretch its pacing so it doesn't all finish while invest is still running.
+    const radarWindow = realMode ? 30000 : duration * 0.55;
+    const rStep = radarWindow / RADAR_AGENTS.length;
     const rts = RADAR_AGENTS.map((_, i) =>
       setTimeout(() => setRadarDone(v => Math.max(v, i + 1)), rStep * (i + 1) + 500)
     );
-    const bt    = setTimeout(() => setBridgeDone(true), duration * 0.76);
-    const tick  = setInterval(() => setSecs(s => +(s + 0.1).toFixed(1)), 100);
-    const skip3 = setTimeout(() => setCanSkip(true), 3000); // H3 — show skip after 3s
-    const end   = setTimeout(() => {
-      if (!doneRef.current) { doneRef.current = true; onDone(); }
-    }, duration + 500);
+
+    let its = [], bt = null, end = null;
+    if (realMode) {
+      // SSE drives invest rows, bridge, and the transition. Safety net only:
+      // if 'complete' never arrives (API hang), bail out after 210s.
+      end = setTimeout(() => {
+        if (!doneRef.current) { doneRef.current = true; onDone(); }
+      }, 210000);
+    } else {
+      // Demo mode (no backend): timer drives invest, bridge, and transition.
+      const iStep = (duration * 0.58) / INVEST_AGENTS.length;
+      its = INVEST_AGENTS.map((_, i) =>
+        setTimeout(() => setInvestDone(v => Math.max(v, i + 1)), iStep * (i + 1))
+      );
+      bt  = setTimeout(() => setBridgeDone(true), duration * 0.76);
+      end = setTimeout(() => {
+        if (!doneRef.current) { doneRef.current = true; onDone(); }
+      }, duration + 500);
+    }
 
     return () => {
-      [...its, ...rts, bt, end, skip3].forEach(clearTimeout);
+      [...its, ...rts, skip3].forEach(clearTimeout);
+      if (bt) clearTimeout(bt);
+      if (end) clearTimeout(end);
       clearInterval(tick);
     };
-  }, []);
+  }, [jobId]);
 
   const done = investDone + radarDone + (bridgeDone ? 1 : 0);
   const total = INVEST_AGENTS.length + RADAR_AGENTS.length + 1;
@@ -119,7 +182,9 @@ function LoadingScreen({ onDone, duration = 8000, scenario, jobId, onResult }) {
         <em>{city}</em>
       </h2>
       <div className="sub">
-        Vos données locales et nationales sont analysées — résultat dans quelques secondes.
+        {realMode
+          ? 'Analyse en temps réel — OpenStreetMap, demande locale et raisonnement IA. Les résultats s\'affichent au fil de l\'eau.'
+          : 'Vos données locales et nationales sont analysées — résultat dans quelques secondes.'}
       </div>
 
       {/* Parallel rails */}
@@ -140,7 +205,7 @@ function LoadingScreen({ onDone, duration = 8000, scenario, jobId, onResult }) {
                   <div className="agent-name" style={{ fontSize: 13 }}>{a.name}</div>
                   <div className="agent-task" style={{ fontSize: 11 }}>
                     {isActive && <span className="spinner" />}
-                    {isDone ? a.done : a.task}
+                    {isDone ? (liveFindings[a.id] || a.done) : a.task}
                   </div>
                 </div>
               </div>
@@ -185,7 +250,7 @@ function LoadingScreen({ onDone, duration = 8000, scenario, jobId, onResult }) {
             </div>
             <div className="agent-task" style={{ fontSize: 11 }}>
               {bridgeReady && !bridgeDone && <span className="spinner" />}
-              {bridgeDone ? BRIDGE.done : BRIDGE.task}
+              {bridgeDone ? (liveFindings[5] || BRIDGE.done) : BRIDGE.task}
             </div>
           </div>
           <div className="agent-status">
@@ -196,7 +261,9 @@ function LoadingScreen({ onDone, duration = 8000, scenario, jobId, onResult }) {
 
       <div className="progress-meta" style={{ width: 760, maxWidth: '100%' }}>
         <span>{done}/{total} analyses terminées</span>
-        <span>{Math.min(secs, duration / 1000).toFixed(1)}s / ~{Math.round(duration / 1000)}s</span>
+        <span>{realMode
+          ? `${secs.toFixed(1)}s · analyse réelle en cours`
+          : `${Math.min(secs, duration / 1000).toFixed(1)}s / ~${Math.round(duration / 1000)}s`}</span>
       </div>
 
       {/* H3 — skip button, visible after 3s */}

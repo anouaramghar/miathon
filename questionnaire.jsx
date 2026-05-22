@@ -134,16 +134,7 @@ function Questionnaire({ form, setForm, onSubmit, onQuickFill, onBack }) {
           </div>
           <div className="quick">
             <div className="row">
-              <button className="btn ghost" onClick={() => onQuickFill('hassan')}>→ Hassan · MRE Berkane</button>
-              <button className="btn ghost" onClick={() => onQuickFill('samira')}>→ Samira · MRE Tanger</button>
-            </div>
-            <div className="row">
-              <button className="btn ghost" onClick={() => onQuickFill('fatima')}>→ Fatima · diplômée Berkane</button>
-              <button className="btn ghost" onClick={() => onQuickFill('leila')}>→ Leila · diplômée Rabat</button>
-            </div>
-            <div className="row">
-              <button className="btn ghost" onClick={() => onQuickFill('omar')}>→ Omar · fonctionnaire Casa</button>
-              <button className="btn ghost" onClick={() => onQuickFill('brahim')}>→ Brahim · retraité Agadir</button>
+              <button className="btn ghost" onClick={() => onQuickFill('hassan')}>→ Hassan · MRE Berkane · données réelles</button>
             </div>
             <div className="row">
               <button className="btn ghost" onClick={() => onQuickFill('cri')}>→ CRI Oriental · radar</button>

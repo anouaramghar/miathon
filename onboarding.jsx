@@ -78,8 +78,7 @@ function Onboarding({ form, setForm, onSubmit, onQuickFill }) {
         <div className="quick">
           <div className="lbl">Démo Miathon · scénarios pré-remplis</div>
           <div className="row">
-            <button className="btn ghost" onClick={() => onQuickFill('hassan')}>→ Hassan, MRE Amsterdam</button>
-            <button className="btn ghost" onClick={() => onQuickFill('fatima')}>→ Fatima, diplômée Berkane</button>
+            <button className="btn ghost" onClick={() => onQuickFill('hassan')}>→ Hassan, MRE Berkane · données réelles</button>
           </div>
         </div>
 

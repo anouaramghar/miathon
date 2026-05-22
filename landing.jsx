@@ -36,10 +36,7 @@ function Landing({ onCTA, onQuickDemo }) {
         <div className="landing-demo">
           <span className="demo-label">Voir en direct</span>
           <button className="demo-chip" onClick={() => onQuickDemo('hassan')}>
-            <span className="demo-icon">▸</span> Hassan · MRE Amsterdam
-          </button>
-          <button className="demo-chip" onClick={() => onQuickDemo('fatima')}>
-            <span className="demo-icon">▸</span> Fatima · diplômée Nador
+            <span className="demo-icon">▸</span> Hassan · MRE Berkane · données réelles
           </button>
           <button className="demo-chip demo-chip-radar" onClick={() => onQuickDemo('cri')}>
             <span className="demo-icon">◎</span> CRI Oriental · radar

@@ -263,12 +263,7 @@ function App() {
         </TweakSection>
 
         <TweakSection label="Scénarios démo (pitch)">
-          <TweakButton label="▶ Hassan · MRE Berkane · Pharmacie"      onClick={() => goToScenario('hassan')}/>
-          <TweakButton label="▶ Fatima · diplômée Berkane · Papeterie" onClick={() => goToScenario('fatima')}/>
-          <TweakButton label="▶ Omar · fonctionnaire Casa · Coworking"  onClick={() => goToScenario('omar')}/>
-          <TweakButton label="▶ Samira · MRE Tanger · Résidence"        onClick={() => goToScenario('samira')}/>
-          <TweakButton label="▶ Brahim · retraité Agadir · Riad"        onClick={() => goToScenario('brahim')}/>
-          <TweakButton label="▶ Leila · diplômée Rabat · Social media"  onClick={() => goToScenario('leila')}/>
+          <TweakButton label="▶ Hassan · MRE Berkane · données réelles" onClick={() => goToScenario('hassan')}/>
           <TweakButton label="▶ CRI Oriental · radar"                   onClick={() => goToScenario('cri')}/>
           <TweakButton label="▶ CRI Casablanca · radar"                 onClick={() => goToScenario('cri_casa')}/>
           <TweakButton label="⚡ Magic moment · Nador → Hassan"
